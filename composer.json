@@ -15,7 +15,8 @@
     "laravel/nova": "*",
     "laravel/sanctum": "^2.11",
     "laravel/tinker": "^2.5",
-    "laravelwebdev/responsive": "^1.0"
+    "laravelwebdev/responsive": "^1.0",
+    "pktharindu/nova-permissions": "^3.0"
   },
   "require-dev": {
     "facade/ignition": "^2.5",
