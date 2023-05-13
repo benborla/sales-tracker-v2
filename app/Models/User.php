@@ -10,10 +10,11 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\UserStore;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Store;
+use Silvanite\Brandenburg\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -50,10 +51,11 @@ class User extends Authenticatable
         return $this->hasMany(UserStore::class);
     }
 
-    public function scopeWithStore($query, Store $store)
+    public function scopeWithStore($query, Store $store, int $userId)
     {
-        return $query->whereHas('stores', function ($q) use ($store) {
-            $q->where('store_id', $store->id);
+        return $query->whereHas('stores', function ($q) use ($store, $userId) {
+            $q->where('store_id', '=', $store->id);
+            $q->where('user_id', '=', $userId);
         })->with(['stores']);
     }
 }

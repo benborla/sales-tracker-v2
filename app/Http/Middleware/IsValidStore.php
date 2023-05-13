@@ -25,7 +25,7 @@ class IsValidStore
             return $next($request);
         }
 
-        $store = Store::query()->where('domain', '=', $subdomain)->firstOrFail();
+        $store = Store::query()->getStore($subdomain);
 
         // @INFO: throw 404 if store is not active
         if (! $store->is_active) {

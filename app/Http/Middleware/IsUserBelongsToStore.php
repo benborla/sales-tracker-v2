@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 class IsUserBelongsToStore
 {
     private const ENDPOINT_LOGIN = '/login';
+    private const MAIN_SALES_TRACKER_ACCESS = 'mainSalesTracker';
 
     /**
      * Handle an incoming request.
@@ -25,16 +26,29 @@ class IsUserBelongsToStore
 
         $store = $request->query->get('store') ?: null;
 
-        if (is_null($store)) {
-            abort(404);
+        // @INFO: if store is equal to null, we assume that the user is accessing
+        // the main sales tracker, now we need to check if the user is allowed to 
+        // access the main sales tracker
+        if (auth()->user()->hasRoleWithPermission(self::MAIN_SALES_TRACKER_ACCESS)) {
+            return $next($request);
         }
 
+        if (is_null($store)) {
+            abort(403);
+        }
+
+        // @INFO: Check whether the user is allowed to access the store
         if (auth()->check() &&
-            $userStore = auth()->user()->query()->withStore($store)->first()
+            auth()->user()->query()->withStore($store, auth()->user()->id)->get()->count()
         ) {
             return $next($request);
         }
 
-        abort(404);
+        auth()->logout();
+
+        return redirect('/')
+            ->with('redirectMessage', 'Redirecting...')
+            ->with('redirectStatusCode', 403)
+            ->with('redirectDelay', 2);
     }
 }

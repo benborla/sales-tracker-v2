@@ -7,6 +7,8 @@ use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
+use Silvanite\NovaToolPermissions\Role;
+use Laravel\Nova\Fields\BelongsToMany;
 
 class User extends Resource
 {
@@ -60,6 +62,8 @@ class User extends Resource
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8'),
+
+            BelongsToMany::make('Roles', 'roles', Role::class),
         ];
     }
 

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Silvanite\Brandenburg\Traits\ValidatesPermissions;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\User' => 'App\Policies\UserPolicy',
     ];
 
     /**
@@ -23,8 +24,17 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerPolicies();
+        collect([
+            'mainSalesTracker',
+        ])->each(function ($permission) {
+            Gate::define($permission, function ($user) use ($permission) {
+                if ($this->nobodyHasAccess($permission)) {
+                    return true;
+                }
 
-        //
+                return $user->hasRoleWithPermission($permission);
+            });
+        });
+        $this->registerPolicies();
     }
 }
