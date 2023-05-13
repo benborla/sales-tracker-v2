@@ -13,5 +13,6 @@
   - Updates:
     - Role is now working
   Issues:
-    - `withStore` is not working, it's fetching the first user in the records
+    - `withStore` is not working, it's fetching the first user in the records [FIXED]
+      - Added user id in the function
 
