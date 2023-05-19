@@ -78,7 +78,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function tools()
     {
         return [
-            new \Silvanite\NovaToolPermissions\NovaToolPermissions()
+            // new \Silvanite\NovaToolPermissions\NovaToolPermissions()
         ];
     }
 
