@@ -22,3 +22,10 @@
 [May 19, 2023]
 - [NEW] Roles now loads a specific roles only for that store, if the main sales tracker
   is accessed, it will load the entire role from the database
+
+[May 25, 2023]
+- [NEW] User Information model and resource
+
+[May 30, 2023]
+- [NEW] Added User Information resource
+

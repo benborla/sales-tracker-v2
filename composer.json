@@ -9,6 +9,10 @@
   "license": "MIT",
   "require": {
     "php": "^7.3|^8.0",
+    "bissolli/nova-phone-field": "^0.0.4",
+    "digitalcloud/zipcode-nova": "^1.0",
+    "dniccum/nova-state-select": "^1.0",
+    "enmaboya/country-select": "^1.0",
     "fruitcake/laravel-cors": "^2.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "laravel/framework": "^8.75",

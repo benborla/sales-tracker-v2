@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Silvanite\NovaToolPermissions\Role;
 use Laravel\Nova\Fields\BelongsToMany;
+use Laravel\Nova\Fields\HasOne;
 
 class User extends Resource
 {

@@ -9,7 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\UserStore;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Store;
+use App\Models\UserInformation;
 use Silvanite\Brandenburg\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -57,5 +59,10 @@ class User extends Authenticatable
             $q->where('store_id', '=', $store->id);
             $q->where('user_id', '=', $userId);
         })->with(['stores']);
+    }
+
+    public function information(): HasOne
+    {
+        return $this->hasOne(UserInformation::class);
     }
 }
