@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\Text;
 use Silvanite\NovaToolPermissions\Role;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasOne;
+use Yassi\NestedForm\NestedForm;
 
 class User extends Resource
 {
@@ -63,6 +64,10 @@ class User extends Resource
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8'),
+
+            NestedForm::make('User Information', 'information')
+                ->heading('Information')
+                ->open(true),
 
             BelongsToMany::make('Roles', 'roles', Role::class),
         ];

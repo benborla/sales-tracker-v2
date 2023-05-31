@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ab58181d271acdf27ff770405a9ce8d",
+    "content-hash": "485bbb7eaca5b94421f4f2629b96dace",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -6680,6 +6680,57 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "yassi/nova-nested-form",
+            "version": "v3.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yassipad/laravel-nova-nested-form.git",
+                "reference": "852b65e01481e79cb28351515f097fc5c7ff6ab6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yassipad/laravel-nova-nested-form/zipball/852b65e01481e79cb28351515f097fc5c7ff6ab6",
+                "reference": "852b65e01481e79cb28351515f097fc5c7ff6ab6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "laravel/nova": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Yassi\\NestedForm\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Yassi\\NestedForm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova package that allows you to create/update/delete nested related fields from a parent form.",
+            "keywords": [
+                "form",
+                "laravel",
+                "nested",
+                "nova",
+                "relationship"
+            ],
+            "support": {
+                "issues": "https://github.com/yassipad/laravel-nova-nested-form/issues",
+                "source": "https://github.com/yassipad/laravel-nova-nested-form/tree/v3.0.12"
+            },
+            "time": "2021-05-26T14:40:19+00:00"
         }
     ],
     "packages-dev": [

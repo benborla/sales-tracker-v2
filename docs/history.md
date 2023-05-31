@@ -29,3 +29,6 @@
 [May 30, 2023]
 - [NEW] Added User Information resource
 
+[May 31, 2023]
+- [NEW] Attached User Information to User resource
+

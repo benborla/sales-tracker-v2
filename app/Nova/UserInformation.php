@@ -20,6 +20,20 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class UserInformation extends Resource
 {
     /**
+     * Indicates if the resource should be displayed in the sidebar.
+     *
+     * @var bool
+     */
+    public static $displayInNavigation = false;
+
+    /**
+     * Indicates whether to show the polling toggle button inside Nova.
+     *
+     * @var bool
+     */
+    public static $showPollingToggle = true;
+
+    /**
      * The model the resource corresponds to.
      *
      * @var string
@@ -61,10 +75,6 @@ class UserInformation extends Resource
 
                 Boolean::make('Is Active'),
 
-                Text::make('Email')
-                    ->sortable()
-                    ->rules('required', 'max:100'),
-
                 Heading::make('Full Name'),
 
                 Text::make('First Name')
@@ -96,6 +106,7 @@ class UserInformation extends Resource
             ]),
 
             Panel::make('Billing Address', [
+                Heading::make('Billing Address'),
                 Text::make('Address', 'billing_address')
                     ->nullable()
                     ->sortable()
@@ -127,6 +138,7 @@ class UserInformation extends Resource
             ]),
 
             Panel::make('Shipping Address', [
+                Heading::make('Shipping Address'),
                 Text::make('Address', 'shippping_address')
                     ->nullable()
                     ->sortable()
@@ -157,7 +169,7 @@ class UserInformation extends Resource
             ]),
 
             Panel::make('Credit Card', [
-
+                Heading::make('Credit Card'),
                 Select::make('Type', 'credit_card_type')->options([
                     'mastercard' => 'MasterCard',
                     'visa' => 'Visa',
@@ -171,7 +183,7 @@ class UserInformation extends Resource
 
                 Date::make('Expiration', 'credit_card_expiration_date')
                     ->format('MM/YYYY')
-                    ->pickerDisplayFormat('m.Y')
+                    ->pickerDisplayFormat('m/Y')
                     ->nullable(),
 
                 Text::make('CVV', 'credit_card_cvv')
@@ -181,6 +193,7 @@ class UserInformation extends Resource
 
 
             Panel::make('Misc.', [
+                Heading::make('Misc.'),
                 TextArea::make('Notes')->nullable(),
             ])
         ];

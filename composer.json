@@ -20,7 +20,8 @@
     "laravel/sanctum": "^2.11",
     "laravel/tinker": "^2.5",
     "laravelwebdev/responsive": "^1.0",
-    "silvanite/novatoolpermissions": "^1.1"
+    "silvanite/novatoolpermissions": "^1.1",
+    "yassi/nova-nested-form": "^3.0"
   },
   "require-dev": {
     "facade/ignition": "^2.5",
