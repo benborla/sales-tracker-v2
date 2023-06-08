@@ -61,6 +61,25 @@ class User extends Authenticatable
         })->with(['stores']);
     }
 
+    /**
+     * Returns the available stores for the user, if no user id is provided
+     * it will return the currently logged-in user available stores 
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param ?int $userId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGetStores($query, int $userId = null)
+    {
+        $userId = $userId ?? auth()->user()->id;
+
+        /** @var \Illuminate\Database\Eloquent\Builder $query **/
+        return $query->join('user_stores', 'user_stores.user_id', '=', 'users.id')
+            ->join('stores', 'stores.id', '=', 'user_stores.store_id')
+            ->where('user_stores.user_id', $userId)
+            ->get();
+    }
+
     public function information(): HasOne
     {
         return $this->hasOne(UserInformation::class);

@@ -32,3 +32,8 @@
 [May 31, 2023]
 - [NEW] Attached User Information to User resource
 
+[June 8, 2023]
+- [NEW] Added User store resource
+- [NEW] Added store resource
+- Added logic to retrieve available stores for the user.
+- Added new dependency "SelectPlus"
