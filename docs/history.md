@@ -37,3 +37,9 @@
 - [NEW] Added store resource
 - Added logic to retrieve available stores for the user.
 - Added new dependency "SelectPlus"
+
+
+- Add logic to only display User Stores resource if the user has the SALES_TRACKER_ADMIN role
+
+[June 22, 2023]
+  - Finished Store resource
