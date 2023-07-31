@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Store;
 use App\Models\UserInformation;
 use Silvanite\Brandenburg\Traits\HasRoles;
+use App\Models\GroupTeamMember;
 
 class User extends Authenticatable
 {
@@ -63,7 +64,7 @@ class User extends Authenticatable
 
     /**
      * Returns the available stores for the user, if no user id is provided
-     * it will return the currently logged-in user available stores 
+     * it will return the currently logged-in user available stores
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param ?int $userId
@@ -83,5 +84,13 @@ class User extends Authenticatable
     public function information(): HasOne
     {
         return $this->hasOne(UserInformation::class);
+    }
+
+    /**
+     * return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function teams(): HasMany
+    {
+        return $this->hasMany(GroupTeamMember::class);
     }
 }
