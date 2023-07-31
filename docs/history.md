@@ -37,9 +37,23 @@
 - [NEW] Added store resource
 - Added logic to retrieve available stores for the user.
 - Added new dependency "SelectPlus"
-
-
 - Add logic to only display User Stores resource if the user has the SALES_TRACKER_ADMIN role
 
 [June 22, 2023]
   - Finished Store resource
+
+[July 18, 2023]
+  - Added Order Entry table and model
+  - Added Group and Group Team resource
+
+[July 25, 2023]
+ - Added rule validation on Team, it won't allow if the user is already existing
+ in the selected team
+
+[July 31, 2023]
+ - Fixed issue with regards to adding multiple teams to a user,
+ - Added "DuplicateUserInGroup" rule that will check if the user in a team already
+ exists.
+ - Added product resource in Nova
+
+
