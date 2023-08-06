@@ -2,15 +2,10 @@
 
 namespace App\Nova;
 
-use App\Models\Store;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Http\Requests\NovaRequest;
-use ZiffMedia\NovaSelectPlus\SelectPlus;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\MorphToMany;
+use App\Rules\DuplicateUserInStore;
 
 class UserStore extends Resource
 {
@@ -59,9 +54,9 @@ class UserStore extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             BelongsTo::make('User'),
-            MorphToMany::make('Stores'),
-            SelectPlus::make('Stores', 'retrieveStores', \App\Nova\Store::class)
-                ->label('name'),
+            BelongsTo::make('Store', 'store', \App\Nova\Store::class)->display('name')
+                ->rules(new DuplicateUserInStore($request->user, $request->store))
+                ->sortable(),
         ];
     }
 
@@ -107,5 +102,23 @@ class UserStore extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    /**
+     * @return string
+     */
+    public static function createLabel()
+    {
+        return 'Add Store';
+    }
+
+     /**
+     * Get the text for the create resource button.
+     *
+     * @return string|null
+     */
+    public static function createButtonLabel()
+    {
+        return __('Add :resource', ['resource' => 'Store']);
     }
 }

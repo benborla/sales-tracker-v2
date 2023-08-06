@@ -69,11 +69,9 @@ class GroupTeamMember extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             BelongsTo::make('GroupTeam')->display('name'),
-            // @TODO: make this unique, add rules unique:user_id
-            // replace with SelectPlus
             BelongsTo::make('User', 'user', \App\Nova\User::class)
                 ->rules(new DuplicateUserInGroup($request->user, $request->groupteam))
-            ->display('email'),
+                ->display('email'),
         ];
     }
 
@@ -121,9 +119,12 @@ class GroupTeamMember extends Resource
         return [];
     }
 
+    /**
+     * @return string
+     */
     public static function createLabel()
     {
-        return ('Add Member');
+        return 'Add Member';
     }
 
     /**

@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class UserStore extends Model
 {
     use HasFactory;
 
     protected $with = ['user', 'store'];
+
+    public $timestamps = false;
 
     /**
      * Retrieve the user model

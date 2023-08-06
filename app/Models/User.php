@@ -49,6 +49,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function stores(): HasMany
     {
         return $this->hasMany(UserStore::class);

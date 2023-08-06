@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Rules\DuplicateUserInStore;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
@@ -71,6 +72,9 @@ class User extends Resource
 
             BelongsToMany::make('Roles', 'roles', Role::class),
             HasMany::make('Teams', 'teams', \App\Nova\GroupTeamMember::class)->sortable(),
+            HasMany::make('Available Store(s)', 'stores', \App\Nova\UserStore::class)
+                ->rules(new DuplicateUserInStore($request->user, $request->store))
+                ->sortable(),
         ];
     }
 
