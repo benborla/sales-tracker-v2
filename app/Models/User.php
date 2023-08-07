@@ -84,7 +84,25 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function information(): HasOne
+    public function scopeGetCustomers($query, $activeOnly = true)
+    {
+        /** @var \Illuminate\Database\Eloquent\Builder $query **/
+        return $query->join('user_information', 'user_information.user_id', '=', 'users.id')
+            ->where('user_information.is_active', '=', $activeOnly)
+            ->get();
+    }
+
+    public function customers()
+    {
+        return $this->information->whereHas('user_information', function ($query) {
+            $query->where('type', '=', UserInformation::USER_TYPE_CUSTOMER);
+        })->get();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneOrMany
+     */
+    public function information(): hasOne
     {
         return $this->hasOne(UserInformation::class);
     }

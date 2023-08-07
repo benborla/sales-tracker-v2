@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -13,9 +14,9 @@ use Enmaboya\CountrySelect\CountrySelect;
 use Digitalcloud\ZipCodeNova\ZipCode;
 use Bissolli\NovaPhoneField\PhoneNumber;
 use Dniccum\StateSelect\StateSelect;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Panel;
-use Laravel\Nova\Http\Requests\NovaRequest;
 
 class UserInformation extends Resource
 {
@@ -64,14 +65,24 @@ class UserInformation extends Resource
      */
     public function fields(Request $request)
     {
+        $resourceId = (int) $request->get('viaResourceId') || null;
+        $user = $resourceId ? User::query()->where('id', '=', $resourceId)->first() : null;
+
         return [
             Panel::make('Details', [
                 ID::make(__('ID'), 'id')->sortable(),
 
+                BelongsTo::make('User', 'user', \App\Nova\User::class)->onlyOnDetail(),
+
                 Select::make('Type')->options([
                     'customer' => 'Customer',
                     'staff' => 'Staff'
-                ]),
+                ])->rules('required'),
+
+                Text::make('Email (Optional)', 'email')
+                    ->default($user?->email ?? 'TBD')
+                    ->withMeta(['readonly' => 'readonly', 'disabled' => 'disabled'])
+                    ->onlyOnForms(),
 
                 Boolean::make('Is Active'),
 
@@ -85,7 +96,7 @@ class UserInformation extends Resource
                     ->sortable()
                     ->rules('required', 'max:50'),
 
-                Text::make('Middle Name (Optional)')
+                Text::make('Middle Name (Optional)', 'middle_name')
                     ->nullable()
                     ->sortable()
                     ->rules('max:50'),
@@ -137,32 +148,32 @@ class UserInformation extends Resource
                     ->hideFromIndex()
             ]),
 
-            Panel::make('Shipping Address', [
+            Panel::make('Shiping Address', [
                 Heading::make('Shipping Address'),
-                Text::make('Address', 'shippping_address')
+                Text::make('Address', 'shipping_address')
                     ->nullable()
                     ->sortable()
                     ->rules('max:255')
                     ->hideFromIndex(),
 
-                Text::make('City', 'shippping_address_city')
+                Text::make('City', 'shipping_address_city')
                     ->nullable()
                     ->sortable()
                     ->rules('max:255')
                     ->hideFromIndex(),
 
-                StateSelect::make('State', 'shippping_address_state')
+                StateSelect::make('State', 'shipping_address_state')
                     ->useFullNames()
                     ->nullable()
                     ->sortable()
                     ->hideFromIndex(),
 
-                ZipCode::make('Zipcode', 'shippping_address_zipcode')
+                ZipCode::make('Zipcode', 'shipping_address_zipcode')
                     ->nullable()
                     ->setCountry('US')
                     ->hideFromIndex(),
 
-                CountrySelect::make('Country', 'shippping_address_country')
+                CountrySelect::make('Country', 'shipping_address_country')
                     ->only(['US'])
                     ->nullable()
                     ->hideFromIndex()
@@ -175,11 +186,10 @@ class UserInformation extends Resource
                     'visa' => 'Visa',
                     'jcb' => 'JCB',
                     'amex' => 'American Express',
-                ]),
+                ])->nullable(),
 
                 Text::make('Card Number', 'credit_card_number')
-                    ->rules('string', 'max:19')
-                    ->nullable(),
+                    ->rules('nullable', 'string', 'max:19'),
 
                 Date::make('Expiration', 'credit_card_expiration_date')
                     ->format('MM/YYYY')
@@ -187,8 +197,7 @@ class UserInformation extends Resource
                     ->nullable(),
 
                 Text::make('CVV', 'credit_card_cvv')
-                    ->nullable()
-                    ->rules('string', 'max:3'),
+                    ->rules('nullable', 'string', 'max:3'),
             ]),
 
 
@@ -242,4 +251,32 @@ class UserInformation extends Resource
     {
         return [];
     }
+   /**
+     * @return string
+     */
+    public static function createLabel()
+    {
+        return 'Add Basic Information';
+    }
+
+    /**
+     * Get the text for the create resource button.
+     *
+     * @return string|null
+     */
+    public static function createButtonLabel()
+    {
+        return __('Add :resource', ['resource' => 'Basic Information']);
+    }
+
+    /**
+     * Get the text for the update resource button.
+     *
+     * @return string|null
+     */
+    public static function updateButtonLabel()
+    {
+        return __('Update :resource', ['resource' => 'Basic Information']);
+    }
+
 }

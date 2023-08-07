@@ -11,6 +11,7 @@ use Laravel\Nova\Fields\Text;
 use Silvanite\NovaToolPermissions\Role;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasOne;
 use Yassi\NestedForm\NestedForm;
 
 class User extends Resource
@@ -66,11 +67,14 @@ class User extends Resource
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8'),
 
-            NestedForm::make('User Information', 'information')
-                ->heading('Information')
-                ->open(true),
+            // @INFO: disabled at the moment, causing an error
+            // @ERROR: field defining the inverse relationship needs to be set on your related resource (e.g. MorphTo, BelongsTo, BelongsToMany...)
+            // NestedForm::make('User Information', 'information')
+            //     ->heading('Information')
+            //     ->open(true),
 
             BelongsToMany::make('Roles', 'roles', Role::class),
+            HasOne::make('Basic Information', 'information', \App\Nova\UserInformation::class)->sortable(),
             HasMany::make('Teams', 'teams', \App\Nova\GroupTeamMember::class)->sortable(),
             HasMany::make('Available Store(s)', 'stores', \App\Nova\UserStore::class)
                 ->rules(new DuplicateUserInStore($request->user, $request->store))
