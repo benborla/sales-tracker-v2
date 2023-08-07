@@ -13,6 +13,13 @@ use Laravel\Nova\Fields\BelongsTo;
 class GroupTeam extends Resource
 {
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = 'Administration';
+
+    /**
      * The model the resource corresponds to.
      *
      * @var string

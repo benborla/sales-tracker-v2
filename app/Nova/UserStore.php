@@ -10,6 +10,13 @@ use App\Rules\DuplicateUserInStore;
 class UserStore extends Resource
 {
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = 'User & Administration';
+
+    /**
      * Indicates if the resource should be displayed in the sidebar.
      *
      * @var bool

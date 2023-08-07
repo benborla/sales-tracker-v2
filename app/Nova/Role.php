@@ -9,6 +9,13 @@ use App\Models\Store;
 class Role extends BaseRole
 {
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = 'Administration';
+
+    /**
      * The model the resource corresponds to.
      *
      * @var string
@@ -25,12 +32,22 @@ class Role extends BaseRole
         /** @var \Illuminate\Database\Query\Builder $query **/
 
         $store = $request->get('store');
-        
+
         if (! $store instanceof Store) {
             return;
         }
 
         return $query->where('store_id', $store->id);
-
     }
+
+    /**
+     * Get the logical group associated with the resource.
+     *
+     * @return string
+     */
+    public static function group()
+    {
+        return static::$group;
+    }
+
 }

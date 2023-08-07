@@ -10,6 +10,13 @@ use App\Rules\DuplicateUserInGroup;
 class GroupTeamMember extends Resource
 {
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = 'Administration';
+
+    /**
      * Indicates if the resource should be displayed in the sidebar.
      *
      * @var bool

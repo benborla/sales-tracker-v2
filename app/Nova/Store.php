@@ -12,6 +12,13 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class Store extends Resource
 {
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = 'Administration';
+
+    /**
      * The model the resource corresponds to.
      *
      * @var string
@@ -51,7 +58,7 @@ class Store extends Resource
 
             Trix::make('Description'),
             Boolean::make('Is Active'),
-            Text::make('Domain')
+            Text::make('Sub-domain', 'domain')
                 ->sortable()
                 ->rules('required', 'max:255'),
         ];

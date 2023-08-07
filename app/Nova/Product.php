@@ -13,6 +13,13 @@ use Laravel\Nova\Panel;
 class Product extends Resource
 {
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = 'Product & Orders';
+
+    /**
      * The model the resource corresponds to.
      *
      * @var string
