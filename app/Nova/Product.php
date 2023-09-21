@@ -7,7 +7,9 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Panel;
 
 class Product extends Resource
@@ -31,7 +33,7 @@ class Product extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -93,7 +95,7 @@ class Product extends Resource
     protected function miscFields()
     {
         return [
-            Text::make('Notes'),
+            Textarea::make('Notes'),
         ];
     }
 
@@ -103,7 +105,10 @@ class Product extends Resource
             // @TODO: replace this with select field
             Text::make('Shipper'),
             Number::make('Shipping Fee')->step(0.01)->displayUsing(fn ($amount) => "$ $amount"),
-            Text::make('Tracking Number'),
+            Select::make('Tracking Number')->options([
+                'Tracking Number' => 'Tracking Number',
+                'Reshipment Tracking Number' => 'Reshipment Tracking Number'
+            ]),
         ];
     }
 

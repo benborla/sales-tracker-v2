@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrderEntryProductPivotsTable extends Migration
+class AddProductIdToOrderItems extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateOrderEntryProductPivotsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_entry_product_pivots', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('order_entries_id')->constrained('order_entries')
+        Schema::table('order_entry_product_pivots', function (Blueprint $table) {
+            //
+            $table->foreignId('product_id')->constrained('products')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-
-            $table->integer('quantity')->default(1);
         });
     }
 
@@ -31,6 +28,8 @@ class CreateOrderEntryProductPivotsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_entry_product_pivots');
+        Schema::table('order_entry_product_pivots', function (Blueprint $table) {
+            //
+        });
     }
 }

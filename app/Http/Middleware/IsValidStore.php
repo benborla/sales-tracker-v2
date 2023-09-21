@@ -18,10 +18,11 @@ class IsValidStore
      */
     public function handle(Request $request, Closure $next)
     {
-        $subdomain = explode('.', $request->getHost()); 
+        $subdomain = explode('.', $request->getHost());
         $subdomain = current($subdomain);
 
         if ($subdomain === config('app.main_store')) {
+            $request->merge(['is_main_store' => true]);
             return $next($request);
         }
 

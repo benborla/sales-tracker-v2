@@ -30,10 +30,17 @@ class Product extends Model
         'shipping_fee',
         'tracking_number',
         'notes',
+        'active'
     ];
 
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function scopeGetActive($query)
+    {
+        /** @var \Illuminate\Database\Eloquent\Builder $query **/
+        $query->where('active', '=', true);
     }
 }

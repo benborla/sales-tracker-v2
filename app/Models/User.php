@@ -84,12 +84,23 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function scopeGetCustomers($query, $activeOnly = true)
+    public function scopeGetUsersByType($query, string $type, bool $activeOnly = true)
     {
         /** @var \Illuminate\Database\Eloquent\Builder $query **/
         return $query->join('user_information', 'user_information.user_id', '=', 'users.id')
             ->where('user_information.is_active', '=', $activeOnly)
+            ->where('user_information.type', '=', $type)
             ->get();
+    }
+
+    public function scopeGetCustomers($query, bool $activeOnly = true)
+    {
+        return $this->scopeGetUsersByType($query, UserInformation::USER_TYPE_CUSTOMER, $activeOnly);
+    }
+
+    public function scopeGetStaffs($query, bool $activeOnly = true)
+    {
+        return $this->scopeGetUsersByType($query, UserInformation::USER_TYPE_STAFF, $activeOnly);
     }
 
     public function customers()

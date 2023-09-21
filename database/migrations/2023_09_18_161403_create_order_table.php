@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrderEntriesTable extends Migration
+class CreateOrderTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateOrderEntriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_entries', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_id');
-            $table->string('reference_id');
+            $table->string('reference_id')->nullable();
 
             $table->string('email')->nullable();
 
@@ -24,22 +24,32 @@ class CreateOrderEntriesTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->integer('num_of_boxes_shipped')->default(1);
-            $table->string('shipper')->default('usps');
-            $table->float('shipping_fee');
-            $table->float('tax_fee');
-            $table->float('intermediary_fess');
-            $table->string('tracking_type')->default('tracking_number');
-            $table->string('tracking_reference');
-
-            $table->foreignId('group_teams_id')->constrained('group_team_members')
+            $table->foreignId('handled_by_agent_user_id')->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->integer('num_of_boxes_shipped')->default(1);
+            $table->string('shipper')->default('usps');
+            $table->decimal('shipping_fee')->default(0);
+            $table->decimal('tax_fee');
+            $table->decimal('intermediary_fees');
+            $table->string('tracking_type')->default('tracking_number');
+            $table->string('tracking_reference');
+
             // INFO: total price of the product ordered + (shipping fee - tax fee
             // - intermediary_fess)
-            $table->float('total_sales')->nullable();
+            $table->decimal('total_sales')->nullable(0);
             $table->text('notes')->nullable();
+            /**
+             * @INFO: Available statuses
+             * New, Processed, In-transit, fulfilled or delivered, Failed
+             */
+            $table->text('order_status')->nullable();
+            /**
+             * @INFO: Available statuses
+             * Awaiting Payment, Payment Failed, Payment Received
+             */
+            $table->text('payment_status')->nullable();
 
             $table->timestamps();
         });
@@ -52,6 +62,6 @@ class CreateOrderEntriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_entries');
+        Schema::drop('order_entries');
     }
 }
