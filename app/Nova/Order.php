@@ -4,8 +4,6 @@ namespace App\Nova;
 
 use App\Models\User;
 use App\Models\Order as OrderModel;
-use App\Models\GroupTeamMember;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
@@ -19,6 +17,10 @@ use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 use Yassi\NestedForm\NestedForm;
+use App\Nova\Filters\FilterByOrderStatus;
+use App\Nova\Filters\FilterByPaymentStatus;
+use App\Nova\Filters\FilterByCreatedAt;
+use App\Nova\Filters\FilterByUpdatedAt;
 
 class Order extends Resource
 {
@@ -50,6 +52,12 @@ class Order extends Resource
      */
     public static $search = [
         'id',
+        'invoice_id',
+        'reference_id',
+        'order_status',
+        'payment_status',
+        'total_sales',
+        'tracking_reference'
     ];
 
     /**
@@ -73,8 +81,8 @@ class Order extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable()->hideFromIndex()->hideFromDetail(),
             Text::make('Invoice ID')->exceptOnForms(),
-            Text::make('Reference ID')->exceptOnForms(),
-            DateTime::make('Created At')->format('Y-m-d H:i:s')->exceptOnForms(),
+            Text::make('Reference ID')->exceptOnForms()->onlyOnDetail(),
+            DateTime::make('Created At')->format('DD MMM YYYY')->exceptOnForms(),
             DateTime::make('Updated At')->format('DD MMM YYYY - H:i:s A')->exceptOnForms()->hideFromIndex(),
 
             new Panel('Customer Information', array_merge([
@@ -217,7 +225,12 @@ class Order extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new FilterByOrderStatus,
+            new FilterByPaymentStatus,
+            new FilterByCreatedAt,
+            new FilterByUpdatedAt,
+        ];
     }
 
     /**

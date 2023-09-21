@@ -40,6 +40,8 @@ class GroupTeam extends Resource
      */
     public static $search = [
         'id',
+        'name',
+        'notes'
     ];
 
     public static function label(): string

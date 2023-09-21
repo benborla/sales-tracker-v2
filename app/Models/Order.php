@@ -51,6 +51,7 @@ class Order extends Model
         'shipping_fee' => 'float',
         'tax_fee' => 'float',
         'intermediary_fees' => 'float',
+        'total_sales' => 'float'
     ];
 
     public function setTotalPayableAttribute($totalSales)

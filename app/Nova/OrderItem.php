@@ -168,6 +168,6 @@ class OrderItem extends Resource
     public static function redirectAfterDelete(NovaRequest $request)
     {
         $orderId = $request->request->get('order');
-        return "/resources/orders";
+        return "/resources/orders/$orderId";
     }
 }
