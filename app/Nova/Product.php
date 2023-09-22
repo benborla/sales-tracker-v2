@@ -12,6 +12,7 @@ use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Panel;
+use Vyuldashev\NovaMoneyField\Money;
 
 class Product extends Resource
 {
@@ -112,8 +113,8 @@ class Product extends Resource
     protected function pricingFields()
     {
         return [
-            Number::make('US Price', 'retail_price')->step(0.01)->displayUsing(fn ($amount) => "$ $amount"),
-            Number::make('Wholesale Price', 'reseller_price')->step(0.01)->displayUsing(fn ($amount) => "$ $amount"),
+            Money::make('US Price', 'USD', 'retail_price'),
+            Money::make('Wholesale Price', 'USD', 'reseller_price'),
         ];
     }
 

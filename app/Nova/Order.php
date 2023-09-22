@@ -22,6 +22,7 @@ use App\Nova\Filters\FilterByPaymentStatus;
 use App\Nova\Filters\FilterByCreatedAt;
 use App\Nova\Filters\FilterByUpdatedAt;
 use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
+use Vyuldashev\NovaMoneyField\Money;
 
 class Order extends Resource
 {
@@ -169,21 +170,13 @@ class Order extends Resource
             ]),
 
             new Panel('Fees', [
-                Number::make('Shipping Fee', 'shipping_fee')
-                    ->step(0.01)
-                    ->displayUsing(function ($fee) {
-                        return '$ ' . number_format($fee, 2);
-                    })->hideFromIndex(),
-                Number::make('Tax Fee', 'tax_fee')
-                    ->step(0.01)
-                    ->displayUsing(function ($fee) {
-                        return '$ ' . number_format($fee, 2);
-                    })->hideFromIndex(),
-                Number::make('Intermediary Fees', 'intermediary_fees')
-                    ->step(0.01)
-                    ->displayUsing(function ($fee) {
-                        return '$ ' . number_format($fee, 2);
-                    })->hideFromIndex(),
+
+                Money::make('Shipping Fee', 'USD', 'shipping_fee')
+                    ->hideFromIndex(),
+                Money::make('Tax Fee', 'USD', 'tax_fee')
+                    ->hideFromIndex(),
+                Money::make('Intermediary Fee', 'USD', 'intermediary_fees')
+                    ->hideFromIndex(),
 
                 Number::make('Total Payable', 'total_sales')
                     ->step(0.01)
