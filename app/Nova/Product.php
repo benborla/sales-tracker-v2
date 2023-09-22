@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Number;
@@ -64,8 +65,8 @@ class Product extends Resource
                 ->display('name'),
             new Panel('Basic Information', $this->basicInfoFields()),
             new Panel('Product Information', $this->productInfoFields()),
+            new Panel('Images', $this->productImageField()),
             new Panel('Pricing', $this->pricingFields()),
-            new Panel('Shipping Info', $this->shippingFields()),
             new Panel('Misc.', $this->miscFields()),
 
         ];
@@ -77,6 +78,19 @@ class Product extends Resource
             Text::make('Name')->required(),
             Text::make('UPC')->required(),
             Text::make('ASIN')->required(),
+            Text::make('SKU')->required(),
+            Number::make('Remaining quantity in inventory', 'total_inventory_remaining')
+                ->rules('integer')
+                ->required(),
+            Date::make('Manufactured Date')->required(),
+            Text::make('Made from', 'made_from')->required(),
+        ];
+    }
+
+    protected function productImageField()
+    {
+        return [
+
         ];
     }
 
@@ -86,7 +100,12 @@ class Product extends Resource
             // INFO: product image url
             Text::make('Product Image'),
             Text::make('Weight Value'),
-            Text::make('Weight Unit'),
+            Text::make('Size'),
+            Select::make('Weight Unit')->options([
+                'oz' => 'oz',
+                'fl/oz' => 'fl/oz',
+                'ml' => 'ml'
+            ])->default('oz'),
         ];
     }
 
@@ -101,20 +120,7 @@ class Product extends Resource
     protected function miscFields()
     {
         return [
-            Textarea::make('Notes'),
-        ];
-    }
-
-    protected function shippingFields()
-    {
-        return [
-            // @TODO: replace this with select field
-            Text::make('Shipper'),
-            Number::make('Shipping Fee')->step(0.01)->displayUsing(fn ($amount) => "$ $amount"),
-            Select::make('Tracking Number')->options([
-                'Tracking Number' => 'Tracking Number',
-                'Reshipment Tracking Number' => 'Reshipment Tracking Number'
-            ]),
+            Textarea::make('Notes')->alwaysShow(),
         ];
     }
 

@@ -36,8 +36,7 @@ class OrderObserver
     {
         $uniqueReference = strtoupper(substr(uniqid(date('mdHis')), 1, 16));
         $order->invoice_id = "INV-$uniqueReference";
-        $order->reference_id = "REF-$uniqueReference";
-    }
+   }
 
     private function getTotalPayable(array $orderItems, array $productIds)
     {

@@ -17,11 +17,13 @@
         "enmaboya/country-select": "^1.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "jameslkingsley/nova-stripe-theme": "^1.0",
         "laravel/framework": "^8.75",
         "laravel/nova": "*",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "laravelwebdev/responsive": "^1.0",
+        "maatwebsite/laravel-nova-excel": "^1.2",
         "silvanite/novatoolpermissions": "^1.1",
         "yassi/nova-nested-form": "^3.0",
         "ziffmedia/nova-select-plus": "^1.0"

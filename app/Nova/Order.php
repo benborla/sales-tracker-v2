@@ -21,6 +21,7 @@ use App\Nova\Filters\FilterByOrderStatus;
 use App\Nova\Filters\FilterByPaymentStatus;
 use App\Nova\Filters\FilterByCreatedAt;
 use App\Nova\Filters\FilterByUpdatedAt;
+use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 
 class Order extends Resource
 {
@@ -81,9 +82,9 @@ class Order extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable()->hideFromIndex()->hideFromDetail(),
             Text::make('Invoice ID')->exceptOnForms(),
-            Text::make('Reference ID')->exceptOnForms()->onlyOnDetail(),
-            DateTime::make('Created At')->format('DD MMM YYYY')->exceptOnForms(),
-            DateTime::make('Updated At')->format('DD MMM YYYY - H:i:s A')->exceptOnForms()->hideFromIndex(),
+            Text::make('Reference ID'),
+            DateTime::make('Created At')->exceptOnForms(),
+            DateTime::make('Updated At')->exceptOnForms()->hideFromIndex(),
 
             new Panel('Customer Information', array_merge([
                 Select::make('Customer', 'user_id')
@@ -189,7 +190,7 @@ class Order extends Resource
             ]),
 
             new Panel('Misc', [
-                Textarea::make('Notes')
+                Textarea::make('Notes')->alwaysShow()
             ])
         ];
     }
@@ -252,6 +253,8 @@ class Order extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new DownloadExcel(),
+        ];
     }
 }

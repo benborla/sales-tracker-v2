@@ -177,6 +177,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\NovaServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+        Maatwebsite\LaravelNovaExcel\LaravelNovaExcelServiceProvider::class,
     ],
 
     /*

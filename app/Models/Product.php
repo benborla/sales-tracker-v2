@@ -26,11 +26,13 @@ class Product extends Model
         'product_image', // <-- image link url
         'weight_value',
         'weight_unit',
-        'shipper',
-        'shipping_fee',
-        'tracking_number',
         'notes',
-        'active'
+        'active',
+        'size',
+        'made_from',
+        'manufactured_date',
+        'sku',
+        'total_inventory_remaining'
     ];
 
     public function store(): BelongsTo
