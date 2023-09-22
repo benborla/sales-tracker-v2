@@ -40,6 +40,7 @@ class Order extends Model
         'handled_by_agent_id',
         'invoice_id',
         'reference_id',
+        'sales_channel',
     ];
 
     /**

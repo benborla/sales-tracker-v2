@@ -112,8 +112,8 @@ class Product extends Resource
     protected function pricingFields()
     {
         return [
-            Number::make('Retail Price')->step(0.01)->displayUsing(fn ($amount) => "$ $amount"),
-            Number::make('Reseller Price')->step(0.01)->displayUsing(fn ($amount) => "$ $amount"),
+            Number::make('US Price', 'retail_price')->step(0.01)->displayUsing(fn ($amount) => "$ $amount"),
+            Number::make('Wholesale Price', 'reseller_price')->step(0.01)->displayUsing(fn ($amount) => "$ $amount"),
         ];
     }
 

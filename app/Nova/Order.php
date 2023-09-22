@@ -81,10 +81,19 @@ class Order extends Resource
 
         return [
             ID::make(__('ID'), 'id')->sortable()->hideFromIndex()->hideFromDetail(),
-            Text::make('Invoice ID')->exceptOnForms(),
+            Text::make('Invoice ID', function () {
+                $url = "/resources/{$this->uriKey()}/{$this->id}";
+                return "<a class='no-underline dim text-primary font-bold text-xs' href='{$url}'>{$this->invoice_id}</a>";
+            })->asHtml()->exceptOnForms(),
             Text::make('Reference ID'),
-            DateTime::make('Created At')->exceptOnForms(),
-            DateTime::make('Updated At')->exceptOnForms()->hideFromIndex(),
+            Text::make('Created At', function () {
+                $createdAt = \Carbon\Carbon::parse($this->created_at)->diffForHumans();
+                return "<p class='text-xs'>$createdAt</p>";
+            })
+                ->asHtml()
+                ->onlyOnIndex(),
+            DateTime::make('Date Created', 'created_at')->exceptOnForms()->onlyOnDetail(),
+            DateTime::make('Last Update', 'updated_at')->exceptOnForms()->onlyOnDetail(),
 
             new Panel('Customer Information', array_merge([
                 Select::make('Customer', 'user_id')
@@ -92,11 +101,7 @@ class Order extends Resource
                     ->options($customers)
                     ->searchable()
                     ->onlyOnForms(),
-
                 BelongsTo::make('Customer', 'user', \App\Nova\User::class)
-                    ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
-                        dd($model);
-                    })
                     ->exceptOnForms(),
             ], $this->getStoreField($request))),
 
@@ -183,13 +188,14 @@ class Order extends Resource
                 Number::make('Total Payable', 'total_sales')
                     ->step(0.01)
                     ->displayUsing(function ($fee) {
-                        return '$ ' . number_format($fee, 2);
-                    })
+                        return '<p class="font-bold text-xs text-danger">$ ' . number_format($fee, 2) . '</p>';
+                    })->asHtml()
                     ->exceptOnForms(),
 
             ]),
 
             new Panel('Misc', [
+                Text::make('Sales Channel'),
                 Textarea::make('Notes')->alwaysShow()
             ])
         ];
