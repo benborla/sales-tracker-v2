@@ -43,6 +43,12 @@ class Product extends Model
     public function scopeGetActive($query)
     {
         /** @var \Illuminate\Database\Eloquent\Builder $query **/
-        $query->where('active', '=', true);
+        return $query->where('active', '=', true);
+    }
+
+    public function scopeHasEnoughInventory($query)
+    {
+        /** @var \Illuminate\Database\Eloquent\Builder $query **/
+        return $query->where('total_inventory_remaining', '>', '0');
     }
 }

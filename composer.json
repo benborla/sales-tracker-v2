@@ -25,6 +25,7 @@
         "laravelwebdev/responsive": "^1.0",
         "maatwebsite/laravel-nova-excel": "^1.2",
         "silvanite/novatoolpermissions": "^1.1",
+        "tsungsoft/error-message": "^0.0.3",
         "vyuldashev/nova-money-field": "^1.4",
         "yassi/nova-nested-form": "^3.0",
         "ziffmedia/nova-select-plus": "^1.0"
@@ -42,7 +43,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

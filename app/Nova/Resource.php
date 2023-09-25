@@ -5,25 +5,20 @@ namespace App\Nova;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Resource as NovaResource;
 use ChrisWare\NovaBreadcrumbs\Traits\Breadcrumbs;
-use App\Models\Store;
 
 abstract class Resource extends NovaResource
 {
     use Breadcrumbs;
 
-    private static function restrictedQuery(NovaRequest $request, $query)
+    public static function restrictedQuery(NovaRequest $request, $query)
     {
-        if ($request->request->get('is_main_store')) {
+        if (is_main_store()) {
             return $query;
         }
 
-        $store = $request->request->get('store') ?? null;
-
-        if ($store instanceof Store) {
-            $query->where('store_id', $store->id);
+        if (! is_null($storeId = get_store_id())) {
+            $query->where('store_id', $storeId);
         }
-
-        // abort(403);
     }
 
     /**

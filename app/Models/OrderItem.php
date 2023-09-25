@@ -61,4 +61,9 @@ class OrderItem extends Model
     {
         return '$ ' . number_format($this->total_price, 2);
     }
+
+    public function getProductRemainingQuantityAttribute()
+    {
+        return $this->product->total_inventory_remaining ?? 0;
+    }
 }

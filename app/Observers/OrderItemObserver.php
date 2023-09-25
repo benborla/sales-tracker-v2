@@ -10,6 +10,16 @@ use App\Models\Product;
 
 class OrderItemObserver
 {
+    public function created(OrderItem $orderItem)
+    {
+        deduct_from_product_inventory($orderItem);
+    }
+
+    public function updated(OrderItem $orderItem)
+    {
+        deduct_from_product_inventory($orderItem);
+    }
+
     public function saving(OrderItem $orderItem)
     {
         $order = $orderItem->order;
@@ -24,6 +34,7 @@ class OrderItemObserver
                     'quantity' => (int) $quantity
                 ];
 
+                /** @INFO: Combine all the same products and sum up their total quantity **/
                 $items = collect($orderItems)->groupBy('product_id')
                     ->map(function ($group) {
                         return [
@@ -44,25 +55,26 @@ class OrderItemObserver
 
     public function updating(OrderItem $orderItem)
     {
+        // @INFO: Put back the product quantity back to products
+        // for re-computation
+        $product = $orderItem->product;
+        $product->total_inventory_remaining += $orderItem->quantity;
+        $product->save();
+
+        // @INFO: Re-compute
         $this->saving($orderItem);
     }
 
     public function deleted(OrderItem $orderItem)
     {
-        // @INFO: Re-compute total payable
-        $order = $orderItem->order;
-        $orderItems = $order->orderItems->toArray();
-        $productsPayable = $this->getTotalPayable($orderItems);
-        $order->total_payable = ($productsPayable + $order->shipping_fee)
-            - ($order->tax_fee + $order->intermediary_fees);
-
-        $order->save();
+        // @INFO: Put back the quantity of the product
+        add_to_product_inventory($orderItem);
     }
 
     private function getTotalPayable(array $orderItems)
     {
         if (!count($orderItems)) {
-            return [];
+            return 0;
         }
 
         $orderItems = collect($orderItems);

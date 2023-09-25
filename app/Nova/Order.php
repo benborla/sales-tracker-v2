@@ -99,6 +99,7 @@ class Order extends Resource
             new Panel('Customer Information', array_merge([
                 Select::make('Customer', 'user_id')
                     ->withMeta(['data-field' => 'user-field'])
+                    ->required()
                     ->options($customers)
                     ->searchable()
                     ->onlyOnForms(),
@@ -108,13 +109,11 @@ class Order extends Resource
 
             new Panel('Agent', [
                 Select::make('Agent', 'handled_by_agent_user_id')->options($staff)
+                    ->required()
                     ->searchable()
                     ->onlyOnForms(),
 
                 BelongsTo::make('Agent', 'user', \App\Nova\User::class)
-                    ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
-                        $model->{$attribute} = 'fucker';
-                    })
                     ->onlyOnDetail(),
             ]),
 
@@ -164,18 +163,21 @@ class Order extends Resource
 
             new Panel('Products', [
                 NestedForm::make('OrderItem', 'orderItems')
+                    ->required()
                     ->heading('Product'),
-
-                HasMany::make('Products', 'orderItems', \App\Nova\OrderItem::class)->sortable(),
+                HasMany::make('Products', 'orderItems', \App\Nova\OrderItem::class)->required()->sortable(),
             ]),
 
             new Panel('Fees', [
 
                 Money::make('Shipping Fee', 'USD', 'shipping_fee')
+                    ->required()
                     ->hideFromIndex(),
                 Money::make('Tax Fee', 'USD', 'tax_fee')
+                    ->required()
                     ->hideFromIndex(),
                 Money::make('Intermediary Fee', 'USD', 'intermediary_fees')
+                    ->required()
                     ->hideFromIndex(),
 
                 Number::make('Total Payable', 'total_sales')
@@ -184,11 +186,12 @@ class Order extends Resource
                         return '<p class="font-bold text-xs text-danger">$ ' . number_format($fee, 2) . '</p>';
                     })->asHtml()
                     ->exceptOnForms(),
-
             ]),
 
             new Panel('Misc', [
-                Text::make('Sales Channel'),
+                Text::make('Sales Channel')
+                    ->rules('required', 'string', 'max:20')
+                    ->required(),
                 Textarea::make('Notes')->alwaysShow()
             ])
         ];
@@ -256,4 +259,24 @@ class Order extends Resource
             new DownloadExcel(),
         ];
     }
+
+    /**
+     * Build a "detail" query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function detailQuery(NovaRequest $request, $query)
+    {
+        $order = parent::detailQuery($request, $query);
+        $orderToUpdate = $order->first();
+
+        if ($orderToUpdate instanceof OrderModel) {
+            update_total_payable($orderToUpdate);
+        }
+
+        return $order;
+    }
+
 }
