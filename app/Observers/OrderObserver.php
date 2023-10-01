@@ -35,8 +35,16 @@ class OrderObserver
     public function creating(Order $order)
     {
         $uniqueReference = strtoupper(substr(uniqid(date('mdHis')), 1, 16));
+        //$order->is_approved = auth()->
+        $order->created_by = auth()->user()->id;
+        $order->updated_by = auth()->user()->id;
         $order->invoice_id = "INV-$uniqueReference";
    }
+
+    public function updating(Order $order)
+    {
+        $order->updated_by = auth()->user()->id;
+    }
 
     private function getTotalPayable(array $orderItems, array $productIds)
     {

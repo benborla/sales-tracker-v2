@@ -2,9 +2,41 @@
 
 use App\Models\Store;
 use App\Models\Order;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\OrderItem;
 use Illuminate\Support\Arr;
+
+if (!function_exists('can')) {
+    function can(string $model, string $permission, ?User $user = null): bool
+    {
+        if (!class_exists($model)) {
+
+            return false;
+        }
+
+        $model = last(explode('\\', $model));
+        $permission = preg_replace('/\s+/', '_', trim($permission));
+        $permission = strtoupper("{$model}_$permission");
+
+        return $user->hasRoleWithPermission($permission);
+    }
+}
+
+if (!function_exists('i')) {
+    function i(string $permission, string $model): bool
+    {
+        return can($model, $permission, auth()->user());
+    }
+}
+
+if (!function_exists('admin_all_access')) {
+    function admin_all_access(): bool
+    {
+        return auth()->user()->hasRoleWithPermission(\App\Permissions\Admin::ADMIN_ALL_ACCESS->value);
+    }
+}
+
 
 if (!function_exists('is_main_store')) {
     function is_main_store()

@@ -41,6 +41,9 @@ class Order extends Model
         'invoice_id',
         'reference_id',
         'sales_channel',
+        'created_by',
+        'updated_by',
+        'is_approved',
     ];
 
     /**
@@ -66,6 +69,16 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class);
+    }
+
+    public function orderCreatedBy()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by', 'id');
+    }
+
+    public function orderUpdatedBy()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'updated_by', 'id');
     }
 
     /**

@@ -25,6 +25,10 @@
     - Link: https://novapackages.com/?search=media&tag=all
 [ ] - use reseller_price of the user is a reseller
 	[ ] - add a reseller flag in the user table
+[x] - Add created_by and updated_by, approved_by fields in order
+[x] - Add is_approved column for orders
+[x] - Test new order columns
+[ ] - Is Approve, need to add this
 
 # Inventory
 [x] - When creating an order, product inventory should be deducted based on
@@ -43,3 +47,10 @@ the set quantity for that product
 ### Resource:
 https://novapackages.com/packages/abordage/nova-html-card
 
+
+## Rule based on value
+use Illuminate\Validation\Rule;
+
+Text::make('Email')->required(function ($request) {
+    return $this->account_locked !== true;
+})->rules([Rule::requiredIf($this->account_locked)]),

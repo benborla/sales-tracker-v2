@@ -8,7 +8,7 @@ use Silvanite\Brandenburg\Role as BaseRole;
 use App\Models\Store;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Role extends BaseRole 
+class Role extends BaseRole
 {
     use HasFactory;
 

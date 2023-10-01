@@ -12,7 +12,7 @@ use Silvanite\NovaToolPermissions\Role;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\HasOne;
-use Yassi\NestedForm\NestedForm;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class User extends Resource
 {
@@ -45,6 +45,51 @@ class User extends Resource
     public static $search = [
         'id', 'name', 'email',
     ];
+
+    public static function restrictedQuery(NovaRequest $request, $query)
+    {
+        if (is_main_store() && admin_all_access()) {
+            return $query;
+        }
+    }
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return self::restrictedQuery($request, $query);
+    }
+
+    /**
+     * Build a Scout search query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Laravel\Scout\Builder  $query
+     * @return \Laravel\Scout\Builder
+     */
+    public static function scoutQuery(NovaRequest $request, $query)
+    {
+        return self::restrictedQuery($request, $query);
+    }
+
+    /**
+     * Build a "detail" query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function detailQuery(NovaRequest $request, $query)
+    {
+        return self::restrictedQuery($request, $query);
+    }
+
+
 
     /**
      * Get the fields displayed by the resource.

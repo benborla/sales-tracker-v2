@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Store;
 use App\Models\GroupTeamMember;
+use App\Models\User;
 
 class GroupTeam extends Model
 {
@@ -20,8 +21,11 @@ class GroupTeam extends Model
      */
     protected $fillable = [
         'store_id',
+        'team_lead_user_id',
         'name',
         'notes',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -40,6 +44,11 @@ class GroupTeam extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function teamLead(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'team_lead_user_id', 'id');
     }
 
     /**

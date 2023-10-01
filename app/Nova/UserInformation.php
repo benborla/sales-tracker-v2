@@ -191,10 +191,10 @@ class UserInformation extends Resource
                 Text::make('Card Number', 'credit_card_number')
                     ->rules('nullable', 'string', 'max:19'),
 
-                Date::make('Expiration', 'credit_card_expiration_date')
-                    ->format('MM/YYYY')
-                    ->pickerDisplayFormat('m/Y')
-                    ->nullable(),
+                Text::make('Expiration', 'credit_card_expiration_date')
+                    ->rules('nullable', 'string', 'date_format:m/Y')
+                    ->placeholder(\Carbon\Carbon::now()->format('m/Y'))
+                    ->help('<span class="text-success">Format: 01/2023</span>'),
 
                 Text::make('CVV', 'credit_card_cvv')
                     ->rules('nullable', 'string', 'max:3'),
@@ -251,7 +251,7 @@ class UserInformation extends Resource
     {
         return [];
     }
-   /**
+    /**
      * @return string
      */
     public static function createLabel()
@@ -278,5 +278,4 @@ class UserInformation extends Resource
     {
         return __('Update :resource', ['resource' => 'Basic Information']);
     }
-
 }

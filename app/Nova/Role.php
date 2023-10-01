@@ -2,9 +2,17 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
 use Silvanite\NovaToolPermissions\Role as BaseRole;
 use App\Models\Store;
+use Laravel\Nova\Fields\ID;
+use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Text;
+use Silvanite\Brandenburg\Policy;
+use Benjaminhirsch\NovaSlugField\Slug;
+use Laravel\Nova\Fields\BelongsToMany;
+use Silvanite\NovaFieldCheckboxes\Checkboxes;
+use Benjaminhirsch\NovaSlugField\TextWithSlug;
+use App\Permissions\GetPermissions;
 
 class Role extends BaseRole
 {
@@ -21,6 +29,44 @@ class Role extends BaseRole
      * @var string
      */
     public static $model = \App\Models\Role::class;
+
+    /**
+     * Get the fields displayed by the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function fields(Request $request)
+    {
+        return [
+            ID::make()->sortable(),
+
+            TextWithSlug::make(__('Name'), 'name')->sortable()->slug('slug'),
+
+            Slug::make(__('Slug'), 'slug')
+                ->rules('required')
+                ->creationRules('unique:roles')
+                ->updateRules('unique:roles,slug,{{resourceId}}')
+                ->sortable(),
+
+            Checkboxes::make(__('Permissions'), 'permissions')->options(collect(GetPermissions::all())
+                ->mapWithKeys(function ($policy) {
+                    return [
+                        $policy => __($policy),
+                    ];
+                })
+                ->sort()
+                ->toArray()),
+
+            Text::make(__('Users'), function () {
+                return count($this->users);
+            })->onlyOnIndex(),
+
+            BelongsToMany::make(__('Users'), 'users', config('novatoolpermissions.userResource', 'App\Nova\User'))
+                ->searchable(),
+        ];
+    }
+
 
     /**
      * @var \Illuminate\Http\Request $request

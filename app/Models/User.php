@@ -65,12 +65,20 @@ class User extends Authenticatable
         })->with(['stores']);
     }
 
+    public function scopeGetUsersInStore($query, Store $store)
+    {
+        return $query->whereHas('stores', function ($q) use ($store) {
+            $q->where('store_id', '=', $store->id);
+        })->with(['stores']);
+    }
+
     /**
      * Returns the available stores for the user, if no user id is provided
      * it will return the currently logged-in user available stores
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param ?int $userId
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeGetStores($query, int $userId = null)
@@ -82,6 +90,35 @@ class User extends Authenticatable
             ->join('stores', 'stores.id', '=', 'user_stores.store_id')
             ->where('user_stores.user_id', $userId)
             ->get();
+    }
+
+    /**
+     * Returns the users based on role
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param string $role
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGetUserByRole($query, string $role)
+    {
+        return $query->join('role_user AS ru', 'ru.user_id', '=', 'users.id')
+            ->join('roles AS r', 'r.id', '=', 'ru.role_id')
+            ->join('user_information AS ui', 'ui.user_id', '=', 'users.id')
+            ->where('r.name', $role)
+            ->where('ui.is_active', '=', true);
+    }
+
+    /**
+     * Returns the users that has a Team Leader role
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGetTeamLeads($query)
+    {
+        return $this->scopeGetUserByRole($query, 'Team Leader');
     }
 
     public function scopeGetUsersByType($query, string $type, bool $activeOnly = true)

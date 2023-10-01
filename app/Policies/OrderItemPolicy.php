@@ -27,7 +27,7 @@ class OrderItemPolicy
      */
     public function update()
     {
-        return false;
+        return true;
     }
 
     /**

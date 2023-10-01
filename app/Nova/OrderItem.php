@@ -265,4 +265,9 @@ class OrderItem extends Resource
             throw new \Exception("Cannot add $product->name, product is low on stock.");
         }
     }
+
+    public function authorizedToUpdate(Request $request): bool
+    {
+        return false;
+    }
 }

@@ -48,11 +48,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function gate()
     {
-        Gate::define('viewNova', function ($user) {
-            return in_array($user->email, [
-                //
-            ]);
-        });
+        // Gate::define('viewNova', function ($user) {
+        //     return in_array($user->email, [
+        //         'aromaguera@example.org'
+        //     ]);
+        // });
     }
 
     /**
@@ -86,7 +86,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         return [
             // new \Silvanite\NovaToolPermissions\NovaToolPermissions()
-            \ChrisWare\NovaBreadcrumbs\NovaBreadcrumbs::make(),
         ];
     }
 

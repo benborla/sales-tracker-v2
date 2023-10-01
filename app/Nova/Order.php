@@ -23,6 +23,7 @@ use App\Nova\Filters\FilterByCreatedAt;
 use App\Nova\Filters\FilterByUpdatedAt;
 use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 use Vyuldashev\NovaMoneyField\Money;
+use App\Nova\Actions\ApproveOrder;
 
 class Order extends Resource
 {
@@ -93,6 +94,28 @@ class Order extends Resource
             })
                 ->asHtml()
                 ->onlyOnIndex(),
+
+            Text::make('Created By', 'createdBy', function ($user) {
+                $user = $this->orderCreatedBy;
+                // @TODO: this should not be clickable, if the user has no
+                // user view access
+                $url = "/resources/users/{$user->id}";
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$user->information->fullName}</a>";
+            })
+                ->asHtml()
+                ->exceptOnForms()
+                ->onlyOnDetail(),
+            Text::make('Last Update By', 'updatedBy', function ($user) {
+                $user = $this->orderUpdatedBy;
+                // @TODO: this should not be clickable, if the user has no
+                // user view access
+                $url = "/resources/users/{$user->id}";
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$user->information->fullName}</a>";
+            })
+                ->asHtml()
+                ->exceptOnForms()
+                ->onlyOnDetail(),
+
             DateTime::make('Date Created', 'created_at')->exceptOnForms()->onlyOnDetail(),
             DateTime::make('Last Update', 'updated_at')->exceptOnForms()->onlyOnDetail(),
 
@@ -257,6 +280,7 @@ class Order extends Resource
     {
         return [
             new DownloadExcel(),
+            new ApproveOrder(),
         ];
     }
 
@@ -278,5 +302,4 @@ class Order extends Resource
 
         return $order;
     }
-
 }

@@ -13,6 +13,17 @@ class UserInformation extends Model
     public const USER_TYPE_STAFF = 'staff';
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_at' => 'date',
+        'updated_at' => 'date',
+    ];
+
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()

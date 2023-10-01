@@ -3,21 +3,39 @@
 namespace App\Nova;
 
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Symfony\Component\HttpFoundation\Request;
 use Laravel\Nova\Resource as NovaResource;
-use ChrisWare\NovaBreadcrumbs\Traits\Breadcrumbs;
 
 abstract class Resource extends NovaResource
 {
-    use Breadcrumbs;
+
+    /**
+     * Determine if this resource is available for navigation.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    public static function availableForNavigation(Request $request)
+    {
+        // @INFO: Check whether the variable is set in the resource
+        // if it's set, then use that value instead of overriding it
+        if (isset(static::$displayInNavigation)) {
+            return static::$displayInNavigation;
+        }
+
+        // @INFO: Check whether the user has an access to that resource
+        if (i('can view', static::$model) || admin_all_access()) {
+            return true;
+        }
+
+        // @INFO: Default return value
+        return false;
+    }
 
     public static function restrictedQuery(NovaRequest $request, $query)
     {
-        if (is_main_store()) {
+        if (is_main_store() && admin_all_access()) {
             return $query;
-        }
-
-        if (! is_null($storeId = get_store_id())) {
-            $query->where('store_id', $storeId);
         }
     }
 

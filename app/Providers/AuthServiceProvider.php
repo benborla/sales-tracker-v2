@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Silvanite\Brandenburg\Traits\ValidatesPermissions;
+use App\Permissions\GetPermissions;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,9 +26,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        collect([
-            'mainSalesTracker',
-        ])->each(function ($permission) {
+        // @INFO: Register your custom action for roles here
+        collect(GetPermissions::all())->each(function ($permission) {
             Gate::define($permission, function ($user) use ($permission) {
                 if ($this->nobodyHasAccess($permission)) {
                     return true;
