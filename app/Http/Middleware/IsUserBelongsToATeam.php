@@ -18,14 +18,30 @@ class IsUserBelongsToATeam
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!is_main_store()) {
-            $team = auth()->user()->getUserTeamByStoreId(get_store_id())
-                ->first()
-                ->only('name', 'group_teams_id', 'team_lead_user_id', 'store_id');
-
-            $request->merge(['team' => $team]);
+        if (!auth()->check()) {
+            return $next($request);
+        }
+        /** @INFO: Ignore if the logged-in user is an admin **/
+        if (admin_all_access()) {
+            return $next($request);
         }
 
-        return $next($request);
+        /** @INFO add team info **/
+        if (!is_main_store()) {
+            try {
+                $team = auth()->user()->getUserTeamByStoreId(get_store_id())
+                    ->firstOrFail()
+                    ->only('name', 'group_teams_id', 'team_lead_user_id', 'store_id');
+
+                $request->merge(['team' => $team]);
+
+                return $next($request);
+            } catch (\Exception) {
+                auth()->logout();
+                abort(403, 'Your account has no assigned team. Please contact your immediate supervisor.', [
+                    'Refresh' => '3, url=' . $request->getHttpHost()
+                ]);
+            }
+        }
     }
 }
