@@ -124,7 +124,9 @@ class User extends Authenticatable
     public function scopeGetUsersByType($query, string $type, bool $activeOnly = true)
     {
         /** @var \Illuminate\Database\Eloquent\Builder $query **/
-        return $query->join('user_information', 'user_information.user_id', '=', 'users.id')
+        return $query
+            ->selet('users.*')
+            ->join('user_information', 'user_information.user_id', '=', 'users.id')
             ->where('user_information.is_active', '=', $activeOnly)
             ->where('user_information.type', '=', $type)
             ->get();
@@ -138,6 +140,23 @@ class User extends Authenticatable
     public function scopeGetStaffs($query, bool $activeOnly = true)
     {
         return $this->scopeGetUsersByType($query, UserInformation::USER_TYPE_STAFF, $activeOnly);
+    }
+
+    public function scopeGetTeam($query)
+    {
+        /** @var \Illuminate\Database\Query\Builder $query **/
+        return $query
+            ->leftJoin('group_team_members', 'group_team_members.user_id', '=', 'users.id')
+            ->leftJoin('group_teams', 'group_teams.id', '=', 'group_team_members.group_teams_id');
+    }
+
+    public function scopeGetUserTeamByStoreId($query, int $storeId, $userId = null)
+    {
+        $userId = $userId ?: auth()->user()->id;
+
+        return $this->scopeGetTeam($query)
+            ->where('group_teams.store_id', '=', $storeId)
+            ->where('users.id', '=', $userId);
     }
 
     public function customers()

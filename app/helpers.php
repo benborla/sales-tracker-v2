@@ -11,7 +11,6 @@ if (!function_exists('can')) {
     function can(string $model, string $permission, ?User $user = null): bool
     {
         if (!class_exists($model)) {
-
             return false;
         }
 
@@ -26,6 +25,11 @@ if (!function_exists('can')) {
 if (!function_exists('i')) {
     function i(string $permission, string $model): bool
     {
+        // @INFO: Skip if the user has an admin access
+        if (admin_all_access()) {
+            return true;
+        }
+
         return can($model, $permission, auth()->user());
     }
 }
@@ -57,6 +61,15 @@ if (!function_exists('get_store_id')) {
         if ($store instanceof Store) {
             return $store->id;
         }
+    }
+}
+
+if (!function_exists('store')) {
+    function store(): null|\App\Models\Store
+    {
+        $store = request()->request->get('store') ?? null;
+
+        return $store;
     }
 }
 

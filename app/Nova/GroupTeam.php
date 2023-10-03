@@ -33,7 +33,7 @@ class GroupTeam extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -66,7 +66,22 @@ class GroupTeam extends Resource
             })->toArray();
 
         return [
-            ID::make(__('ID'), 'id')->sortable(),
+            ID::make(__('ID'), 'id')
+                ->sortable()
+                ->hideFromIndex()
+                ->hideFromDetail(),
+
+            Text::make('Name', function () {
+                if (i('can view', static::$model)) {
+                    $url = "/resources/{$this->uriKey()}/{$this->id}";
+                    return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$this->name}</a>";
+                }
+
+                return $this->name;
+            })
+                ->asHtml()
+                ->exceptOnForms(),
+
             Select::make('Team Leader', 'team_lead_user_id')
                 ->withMeta(['data-field' => 'user-field'])
                 ->required()
@@ -76,7 +91,7 @@ class GroupTeam extends Resource
 
             BelongsTo::make('Store')->display('name'),
             Text::make('Name', 'name')->sortable(),
-            TextArea::make('Notes', 'notes')->sortable(),
+            TextArea::make('Notes', 'notes')->sortable()->alwaysShow(),
             HasMany::make('Members', 'members', \App\Nova\GroupTeamMember::class)->sortable(),
             DateTime::make('Created At')->sortable()->onlyOnIndex(),
             DateTime::make('Updated At')->sortable()->onlyOnIndex(),

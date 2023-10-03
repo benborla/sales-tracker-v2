@@ -1,5 +1,12 @@
 # Todo:
 
+!! Priority
+[x] - fix error on http://sales-tracker.local:8880/resources/roles/8
+        - Not unique table/alias: role_user
+[x] - Fix user table when vieweing as Team Leader
+    - it should show all the members of the team including the team leader
+[x] - Work with policies
+
 ### Orders
 [x] - reference number should be manual input
 [x]  fix the time format

@@ -30,7 +30,7 @@ class Store extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -50,7 +50,21 @@ class Store extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make(__('ID'), 'id')->sortable(),
+            ID::make(__('ID'), 'id')
+                ->sortable()
+                ->hideFromIndex()
+                ->hideFromDetail(),
+
+            Text::make('Name', function () {
+                if (i('can view', static::$model)) {
+                    $url = "/resources/{$this->uriKey()}/{$this->id}";
+                    return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$this->name}</a>";
+                }
+
+                return $this->name;
+            })
+                ->asHtml()
+                ->exceptOnForms(),
 
             Text::make('Name')
                 ->sortable()

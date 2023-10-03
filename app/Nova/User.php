@@ -3,7 +3,9 @@
 namespace App\Nova;
 
 use App\Rules\DuplicateUserInStore;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
@@ -35,7 +37,7 @@ class User extends Resource
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'email';
 
     /**
      * The columns that should be searched.
@@ -43,14 +45,46 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id',
+        'user_information.first_name',
+        'user_information.last_name',
+        'user_information.middle_name',
+        'email',
+        'group_teams.name',
+        'roles.name'
     ];
 
     public static function restrictedQuery(NovaRequest $request, $query)
     {
-        if (is_main_store() && admin_all_access()) {
+        /** @var \Illuminate\Database\Query\Builder $query **/
+        $query = $query
+            ->select([
+                'users.*',
+                'user_information.first_name as first_name',
+                'user_information.last_name as last_name',
+                'user_information.middle_name as middle_name',
+                'r.name as role',
+                'group_teams.name as team'
+            ])
+            ->leftjoin('group_team_members', 'group_team_members.user_id', '=', 'users.id')
+            ->leftjoin('group_teams', 'group_teams.id', '=', 'group_team_members.group_teams_id')
+            ->leftjoin('user_information', 'user_information.user_id', '=', 'users.id')
+            ->leftjoin(DB::raw('role_user ru'), 'ru.user_id', '=', 'users.id')
+            ->leftjoin(DB::raw('roles r'), 'r.id', '=', 'ru.role_id');
+
+        if (admin_all_access()) {
             return $query;
         }
+
+        if (i('can view all in store', static::$model)) {
+            return $query
+                ->leftjoin('user_stores', 'user_stores.user_id', '=', 'users.id')
+                ->leftjoin('stores', 'stores.id', '=', 'user_stores.store_id')
+                ->where('stores.id', '=', get_store_id())
+                ->distinct();
+        }
+
+        $query->where('id', '=', auth()->user()->id);
     }
 
     /**
@@ -89,8 +123,6 @@ class User extends Resource
         return self::restrictedQuery($request, $query);
     }
 
-
-
     /**
      * Get the fields displayed by the resource.
      *
@@ -100,30 +132,61 @@ class User extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
-
-            Gravatar::make()->maxWidth(50),
-
-            Text::make('Name')
+            ID::make(__('ID'), 'id')
                 ->sortable()
-                ->rules('required', 'max:255'),
+                ->hideFromIndex()
+                ->hideFromDetail(),
+
+            Text::make('Email', function () {
+                $url = "/resources/{$this->uriKey()}/{$this->id}";
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$this->email}</a>";
+            })
+                ->asHtml()
+                ->exceptOnForms(),
 
             Text::make('Email')
                 ->sortable()
+                ->onlyOnForms()
                 ->rules('required', 'email', 'max:254')
                 ->creationRules('unique:users,email')
                 ->updateRules('unique:users,email,{{resourceId}}'),
+
+            Gravatar::make()->maxWidth(50),
+
+            Text::make('Store', function () {
+                if (admin_all_access()) {
+                    return $this->stores->implode('store.name', ', ');
+                }
+
+                return store()->name;
+            })
+                ->showOnIndex(admin_all_access())
+                ->showOnDetail(admin_all_access())
+                ->exceptOnForms()
+                ->sortable(),
+
+            Text::make('Name', function () {
+                return "$this->last_name, $this->first_name " . strtoupper(substr($this->middle_name, 1, 1));
+            })
+                ->exceptOnForms()
+                ->sortable(),
+
+            Text::make('Team', function () {
+                return $this->team;
+            })
+                ->exceptOnForms()
+                ->sortable(),
+
+            Text::make('Role', function () {
+                return $this->role;
+            })
+                ->exceptOnForms()
+                ->sortable(),
 
             Password::make('Password')
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8'),
-
-            // @INFO: disabled at the moment, causing an error
-            // @ERROR: field defining the inverse relationship needs to be set on your related resource (e.g. MorphTo, BelongsTo, BelongsToMany...)
-            // NestedForm::make('User Information', 'information')
-            //     ->heading('Information')
-            //     ->open(true),
 
             BelongsToMany::make('Roles', 'roles', Role::class),
             HasOne::make('Basic Information', 'information', \App\Nova\UserInformation::class)->sortable(),

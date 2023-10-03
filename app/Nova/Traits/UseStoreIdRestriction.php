@@ -16,6 +16,10 @@ trait UseStoreIdRestriction
         if (is_main_store() && admin_all_access()) {
             return $query;
         }
+
+        if (i('can view', static::$model)) {
+            return $query->where('store_id', get_store_id());
+        }
     }
 
     /**

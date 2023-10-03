@@ -14,7 +14,7 @@
 
         <ul class="list-reset mb-8">
             @foreach($resources as $resource)
-                @if (i('can view', $resource))
+                @if (i('can view', $resource) || admin_all_access())
                 <li class="leading-tight mb-4 ml-8 text-sm">
                     <router-link :to="{
                         name: 'index',

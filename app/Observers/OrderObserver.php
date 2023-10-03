@@ -35,7 +35,7 @@ class OrderObserver
     public function creating(Order $order)
     {
         $uniqueReference = strtoupper(substr(uniqid(date('mdHis')), 1, 16));
-        //$order->is_approved = auth()->
+        $order->is_approved = i('can approve', Order::class);
         $order->created_by = auth()->user()->id;
         $order->updated_by = auth()->user()->id;
         $order->invoice_id = "INV-$uniqueReference";

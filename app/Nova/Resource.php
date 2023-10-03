@@ -37,6 +37,8 @@ abstract class Resource extends NovaResource
         if (is_main_store() && admin_all_access()) {
             return $query;
         }
+
+        return $query;
     }
 
     /**

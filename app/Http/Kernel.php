@@ -39,6 +39,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\IsValidStore::class,
             \App\Http\Middleware\IsUserBelongsToStore::class,
+            \App\Http\Middleware\IsUserBelongsToATeam::class,
             \App\Http\Middleware\DisableCacheOnDev::class,
         ],
         'api' => [

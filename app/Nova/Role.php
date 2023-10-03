@@ -67,7 +67,6 @@ class Role extends BaseRole
         ];
     }
 
-
     /**
      * @var \Illuminate\Http\Request $request
      * @var \Illuminate\Database\Query\Builder $query
