@@ -18,6 +18,9 @@ class Order extends Model
     public const PAYMENT_STATUS_FAILED = 'payment_failed';
     public const PAYMENT_STATUS_REFUND = 'payment_refund';
 
+    public const PRICE_BASED_ON_RETAIL = 'retail_price';
+    public const PRICE_BASED_ON_RESELLER = 'reseller_price';
+
     use HasFactory;
 
     /**
@@ -44,6 +47,7 @@ class Order extends Model
         'created_by',
         'updated_by',
         'is_approved',
+        'price_based_on',
     ];
 
     /**

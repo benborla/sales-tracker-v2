@@ -88,6 +88,12 @@ class Order extends Resource
                 return "<a class='no-underline dim text-primary font-bold text-xs' href='{$url}'>{$this->invoice_id}</a>";
             })->asHtml()->exceptOnForms(),
             Text::make('Reference ID'),
+            Select::make('Price Based On', 'price_based_on')
+                ->options([
+                    OrderModel::PRICE_BASED_ON_RETAIL => 'U.S Price',
+                    OrderModel::PRICE_BASED_ON_RESELLER => 'Reseller'
+                ])
+                ->required(true),
             Text::make('Created At', function () {
                 $createdAt = \Carbon\Carbon::parse($this->created_at)->diffForHumans();
                 return "<p class='text-xs'>$createdAt</p>";

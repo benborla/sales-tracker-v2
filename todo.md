@@ -35,7 +35,8 @@
 [x] - Add created_by and updated_by, approved_by fields in order
 [x] - Add is_approved column for orders
 [x] - Test new order columns
-[ ] - Is Approve, need to add this
+[x] - Is Approve, need to add this
+    - need to test
 
 # Inventory
 [x] - When creating an order, product inventory should be deducted based on

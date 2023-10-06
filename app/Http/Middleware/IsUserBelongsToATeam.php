@@ -4,8 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use App\Permissions\Admin;
-use App\Models\Store;
 
 class IsUserBelongsToATeam
 {
@@ -26,10 +24,12 @@ class IsUserBelongsToATeam
             return $next($request);
         }
 
-        /** @INFO add team info **/
+        /** @INFO: add team info **/
         if (!is_main_store()) {
             try {
-                $team = auth()->user()->getUserTeamByStoreId(get_store_id())
+                /** @var \App\Models\User $user **/
+                $user = auth()->user();
+                $team = $user->getUserTeamByStoreId(get_store_id())
                     ->firstOrFail()
                     ->only('name', 'group_teams_id', 'team_lead_user_id', 'store_id');
 

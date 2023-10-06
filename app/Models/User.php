@@ -15,6 +15,10 @@ use App\Models\UserInformation;
 use Silvanite\Brandenburg\Traits\HasRoles;
 use App\Models\GroupTeamMember;
 
+/**
+ * @class User
+ * @method getUserTeamByStoreId(int $storeId, $userId = null)
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -125,7 +129,7 @@ class User extends Authenticatable
     {
         /** @var \Illuminate\Database\Eloquent\Builder $query **/
         return $query
-            ->selet('users.*')
+            ->select('users.*')
             ->join('user_information', 'user_information.user_id', '=', 'users.id')
             ->where('user_information.is_active', '=', $activeOnly)
             ->where('user_information.type', '=', $type)
