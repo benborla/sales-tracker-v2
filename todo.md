@@ -4,6 +4,13 @@
 [x] - find a way to make store searchable in product page
 [x] - add policies for products
 [x] - add number of orders in product via using this package:  saumini/count
+[x] - fixes on user and user information
+[x] - add identifier if user is a staff or a customer
+[x] - hide certain fields that should only be shown to staffs
+[x] - add My Profile link 
+[x] - add Change Password link
+[x] - remove Agent in Orders, this should be automatically fill by whoever created the order
+[x] - verify order prices
 
 !! Priority
 [x] - fix error on http://sales-tracker.local:8880/resources/roles/8

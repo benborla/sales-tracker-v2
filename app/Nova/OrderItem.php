@@ -50,13 +50,18 @@ class OrderItem extends Resource
      */
     public function fields(Request $request)
     {
-        $products = Product::query()->getActive()->get()
+        $products = Product::query()
+            ->getActive()
+            ->getProductsBasedOnStore()
+            ->with(['store'])
+            ->get()
             ->mapWithKeys(function ($product) {
-                $price = "$" . \number_format($product->retail_price, 2);
-                $remainingInventory = (int) $product->total_inventory_remaining >= 1 ?
-                'Stock: ' . $product->total_inventory_remaining : 'Out of stock';
+                $store = $product->store['name'];
 
-                return [$product->id => "$product->name - $price (UPC: $product->upc) | $remainingInventory"];
+                $remainingInventory = (int) $product->total_inventory_remaining >= 1 ?
+                    'Stock: ' . $product->total_inventory_remaining : 'Out of stock';
+
+                return [$product->id => "$store | $product->name (UPC: $product->upc) | $remainingInventory"];
             })->toArray();
 
         return [

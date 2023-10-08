@@ -40,7 +40,6 @@ class Order extends Model
         'tracking_reference',
         'total_sales',
         'notes',
-        'handled_by_agent_id',
         'invoice_id',
         'reference_id',
         'sales_channel',
@@ -86,14 +85,6 @@ class Order extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function handledByAgent()
-    {
-        return $this->belongsTo(\App\Nodels\User::class, 'handled_by_agent_user_id', 'id');
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany | OrderItem[]
      */
     public function orderItems()
@@ -107,5 +98,10 @@ class Order extends Model
     public function store()
     {
         return $this->belongsTo(\App\Models\Store::class);
+    }
+
+    public function getIsOrderApprovedAttribute()
+    {
+        return $this->is_approved ? 'yes' : 'no';
     }
 }

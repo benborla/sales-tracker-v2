@@ -24,6 +24,7 @@ use App\Nova\Filters\FilterByUpdatedAt;
 use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 use Vyuldashev\NovaMoneyField\Money;
 use App\Nova\Actions\ApproveOrder;
+use Laravel\Nova\Fields\Boolean;
 
 class Order extends Resource
 {
@@ -71,14 +72,11 @@ class Order extends Resource
      */
     public function fields(Request $request)
     {
-        $customers = User::getCustomers()
+        $customers = User::getCustomers()->with(['information'])->get()
             ->mapWithKeys(function ($user) {
-                return [$user->id => "$user->last_name, $user->first_name $user->middle_name"];
-            })->toArray();
-
-        $staff = User::getStaffs()
-            ->mapWithKeys(function ($user) {
-                return [$user->id => "$user->last_name, $user->first_name $user->middle_name"];
+                $name = $user->information['last_name'] . ', ' . $user->information['first_name'] . ' ' .
+                    strtoupper(substr($user->information['middle_name'], 1, 1)) . '.';
+                return [$user->id => $name];
             })->toArray();
 
         return [
@@ -87,13 +85,33 @@ class Order extends Resource
                 $url = "/resources/{$this->uriKey()}/{$this->id}";
                 return "<a class='no-underline dim text-primary font-bold text-xs' href='{$url}'>{$this->invoice_id}</a>";
             })->asHtml()->exceptOnForms(),
+
+            Boolean::make('Approve Order?', 'is_approved')
+                ->trueValue(true)
+                ->falseValue(false)
+                ->canSee(function () {
+                    return i('can approve', \App\Models\Order::class);
+                })
+                ->onlyOnForms(),
+
             Text::make('Reference ID'),
             Select::make('Price Based On', 'price_based_on')
                 ->options([
                     OrderModel::PRICE_BASED_ON_RETAIL => 'U.S Price',
                     OrderModel::PRICE_BASED_ON_RESELLER => 'Reseller'
                 ])
+                ->onlyOnForms()
                 ->required(true),
+            Badge::make('Price Based On')->map([
+                OrderModel::PRICE_BASED_ON_RETAIL => 'success',
+                OrderModel::PRICE_BASED_ON_RESELLER => 'info'
+            ])->exceptOnForms(),
+
+            Badge::make('Is Order Approved', 'is_order_approved')->map([
+                'yes' => 'success',
+                'no' => 'danger'
+            ])->exceptOnForms(),
+
             Text::make('Created At', function () {
                 $createdAt = \Carbon\Carbon::parse($this->created_at)->diffForHumans();
                 return "<p class='text-xs'>$createdAt</p>";
@@ -103,20 +121,23 @@ class Order extends Resource
 
             Text::make('Created By', 'createdBy', function ($user) {
                 $user = $this->orderCreatedBy;
+
+                $name = $user->information->fullName ?? $user->email;
                 // @TODO: this should not be clickable, if the user has no
                 // user view access
-                $url = "/resources/users/{$user->id}";
-                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$user->information->fullName}</a>";
+                $url = i('can view all', \App\Models\User::class) ? "/resources/users/{$user->id}" : '#';
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$name}</a>";
             })
                 ->asHtml()
                 ->exceptOnForms()
                 ->onlyOnDetail(),
             Text::make('Last Update By', 'updatedBy', function ($user) {
                 $user = $this->orderUpdatedBy;
+                $name = $user->information->fullName ?? $user->email;
                 // @TODO: this should not be clickable, if the user has no
                 // user view access
-                $url = "/resources/users/{$user->id}";
-                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$user->information->fullName}</a>";
+                $url = i('can view all', \App\Models\User::class) ? "/resources/users/{$user->id}" : '#';
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$name}</a>";
             })
                 ->asHtml()
                 ->exceptOnForms()
@@ -137,11 +158,6 @@ class Order extends Resource
             ], $this->getStoreField($request))),
 
             new Panel('Agent', [
-                Select::make('Agent', 'handled_by_agent_user_id')->options($staff)
-                    ->required()
-                    ->searchable()
-                    ->onlyOnForms(),
-
                 BelongsTo::make('Agent', 'user', \App\Nova\User::class)
                     ->onlyOnDetail(),
             ]),
@@ -228,9 +244,10 @@ class Order extends Resource
 
     private function getStoreField(NovaRequest $request): array
     {
-        if ($request->is_main_store) {
+        if (is_main_store()) {
             return [
                 BelongsTo::make('Store', 'store', \App\Nova\Store::class)->display('name')
+                    ->required(true)
                     ->sortable()
             ];
         }

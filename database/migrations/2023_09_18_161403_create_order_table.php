@@ -24,10 +24,6 @@ class CreateOrderTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreignId('handled_by_agent_user_id')->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
             $table->integer('num_of_boxes_shipped')->default(1);
             $table->string('shipper')->default('usps');
             $table->decimal('shipping_fee')->default(0);
@@ -62,6 +58,6 @@ class CreateOrderTable extends Migration
      */
     public function down()
     {
-        Schema::drop('order_entries');
+        Schema::drop('orders');
     }
 }

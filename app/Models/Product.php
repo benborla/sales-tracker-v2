@@ -63,6 +63,15 @@ class Product extends Model
         return $query->where('total_inventory_remaining', '>', '0');
     }
 
+    public function scopeGetProductsBasedOnStore($query)
+    {
+        if (admin_all_access()) {
+            return $query;
+        }
+
+        return $query->where('store_id', '=', get_store_id());
+    }
+
     public function orders()
     {
         return $this->hasMany(OrderItem::class);

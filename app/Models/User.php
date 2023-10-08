@@ -132,8 +132,7 @@ class User extends Authenticatable
             ->select('users.*')
             ->join('user_information', 'user_information.user_id', '=', 'users.id')
             ->where('user_information.is_active', '=', $activeOnly)
-            ->where('user_information.type', '=', $type)
-            ->get();
+            ->where('user_information.type', '=', $type);
     }
 
     public function scopeGetCustomers($query, bool $activeOnly = true)
