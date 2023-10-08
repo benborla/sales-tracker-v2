@@ -55,6 +55,21 @@ class UserInformation extends Resource
      */
     public static $search = [
         'id',
+        'first_name',
+        'last_name',
+        'middle_name',
+        'telephone_number',
+        'mobile_number',
+        'billing_address',
+        'billing_address_city',
+        'billing_address_state',
+        'billing_address_zipcode',
+        'billing_address_country',
+        'shipping_address',
+        'shipping_address_city',
+        'shipping_address_state',
+        'shipping_address_zipcode',
+        'shipping_address_country',
     ];
 
     /**
@@ -77,14 +92,14 @@ class UserInformation extends Resource
                 Select::make('Type')->options([
                     'customer' => 'Customer',
                     'staff' => 'Staff'
-                ])->rules('required'),
+                ])->rules('required')->canSee(function () {
+                    return admin_all_access();
+                }),
 
-                Text::make('Email (Optional)', 'email')
-                    ->default($user?->email ?? 'TBD')
-                    ->withMeta(['readonly' => 'readonly', 'disabled' => 'disabled'])
-                    ->onlyOnForms(),
-
-                Boolean::make('Is Active'),
+                Boolean::make('Is Active')
+                    ->canSee(function () {
+                        return i('can update user status', \App\Models\UserInformation::class);
+                    }),
 
                 Heading::make('Full Name'),
 
@@ -203,7 +218,7 @@ class UserInformation extends Resource
 
             Panel::make('Misc.', [
                 Heading::make('Misc.'),
-                TextArea::make('Notes')->nullable(),
+                TextArea::make('Notes')->nullable()->alwaysShow(),
             ])
         ];
     }

@@ -11,6 +11,8 @@ abstract class Resource extends NovaResource
 {
     use SearchesRelations;
 
+    public static $globallySearchable = false;
+
     /**
      * Determine if this resource is available for navigation.
      *

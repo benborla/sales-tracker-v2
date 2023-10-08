@@ -13,7 +13,11 @@ if ($store) {
     <meta name="viewport" content="width=1280">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @if (is_main_store())
     <title>{{ \Laravel\Nova\Nova::name() }}</title>
+    @else
+    <title>{{ \Laravel\Nova\Nova::name() }} | {{ $appName }}</title>
+    @endif
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,800,800i,900,900i" rel="stylesheet">
@@ -57,13 +61,15 @@ if ($store) {
             <!-- Content -->
             <div class="content">
                 <div class="flex items-center relative shadow h-header bg-white z-20 px-view">
-                    <a v-if="@json(\Laravel\Nova\Nova::name() !== null)" href="{{ \Illuminate\Support\Facades\Config::get('nova.url') }}" class="no-underline dim font-bold text-90 mr-6">
-                        {{ $appName }}
-                    </a>
+                    {{-- @INFO: Not need --}}
+                    {{-- <a v-if="@json(\Laravel\Nova\Nova::name() !== null)" href="{{ \Illuminate\Support\Facades\Config::get('nova.url') }}" class="no-underline dim font-bold text-90 mr-6"> --}}
+                    {{--     {{ $appName }} --}}
+                    {{-- </a> --}}
 
-                    @if (count(\Laravel\Nova\Nova::globallySearchableResources(request())) > 0)
-                        <global-search dusk="global-search-component"></global-search>
-                    @endif
+                    {{-- @INFO: Disable global search --}}
+                    {{-- @if (count(\Laravel\Nova\Nova::globallySearchableResources(request())) > 0) --}}
+                    {{--     <global-search dusk="global-search-component"></global-search> --}}
+                    {{-- @endif --}}
 
                     <dropdown class="ml-auto h-9 flex items-center dropdown-right">
                         @include('nova::partials.user')

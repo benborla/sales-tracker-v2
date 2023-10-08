@@ -7,6 +7,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class StorePolicy
 {
     use HandlesAuthorization;
+
     public function create()
     {
         return i('can create', \App\Models\Store::class);

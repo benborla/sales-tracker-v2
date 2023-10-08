@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Models\UserInformation;
 
 class IsUserBelongsToATeam
 {
@@ -25,7 +26,7 @@ class IsUserBelongsToATeam
         }
 
         /** @INFO: add team info **/
-        if (!is_main_store()) {
+        if (!is_main_store() && is_staff()) {
             try {
                 /** @var \App\Models\User $user **/
                 $user = auth()->user();
@@ -43,5 +44,15 @@ class IsUserBelongsToATeam
                 ]);
             }
         }
+
+        /** @INFO: proceed if customer **/
+        if (is_customer()) {
+            return $next($request);
+        }
+
+        /** @INFO: Redirect if user is unidentified **/
+        abort(403, 'Who are you?', [
+            'Refresh' => '3, url=' . $request->getHttpHost()
+        ]);
     }
 }

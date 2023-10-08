@@ -3,11 +3,71 @@
 use App\Models\Store;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\UserInformation;
 use App\Models\Product;
 use App\Models\OrderItem;
 use Illuminate\Support\Arr;
 
+if (!function_exists('get_user_type')) {
+    /**
+     * Identifies the role of the logged-in user
+     *
+     * @return string
+     */
+    function get_user_type()
+    {
+        $info = auth()->user()->information ?? null;
+
+        if (is_null($info)) {
+            /** @INFO: Identify user based on role **/
+            $role = auth()->user()->roles->first()->slug;
+
+            if ($role === UserInformation::USER_TYPE_CUSTOMER) {
+                return UserInformation::USER_TYPE_CUSTOMER;
+            }
+
+            return UserInformation::USER_TYPE_STAFF;
+        }
+
+        return $info->type;
+    }
+}
+if (!function_exists('is_staff')) {
+    /**
+     * Return true if the user type of the logged-in user is set to "staff"
+     *
+     * @return bool
+     */
+    function is_staff()
+    {
+        return get_user_type() === UserInformation::USER_TYPE_STAFF;
+    }
+}
+
+if (!function_exists('is_customer')) {
+    /**
+     * Return true if the user type of the logged-in user is set to "customer"
+     *
+     * @return bool
+     */
+    function is_customer()
+    {
+        return get_user_type() === UserInformation::USER_TYPE_CUSTOMER;
+    }
+}
+
+
 if (!function_exists('can')) {
+    /**
+     * Return true if the user has the permission to access the provided permission string
+     * with the provided model
+     *
+     * @param string $model
+     * @param string $permission
+     * @param \App\Models\User $user = null
+     *
+     * @return bool
+     */
     function can(string $model, string $permission, ?User $user = null): bool
     {
         if (!class_exists($model)) {
@@ -23,6 +83,15 @@ if (!function_exists('can')) {
 }
 
 if (!function_exists('i')) {
+    /**
+     * Simplified version of "can" function
+     * with the provided model
+     *
+     * @param string $permission
+     * @param string $model
+     *
+     * @return bool
+     */
     function i(string $permission, string $model): bool
     {
         // @INFO: Skip if the user has an admin access

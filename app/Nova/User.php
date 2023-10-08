@@ -54,8 +54,19 @@ class User extends Resource
         'roles.name'
     ];
 
+    /**
+     * The relationships that should be eager loaded on index queries.
+     *
+     * @var array
+     */
+    // public static $with = ['information', 'teams', 'roles'];
+
     public static function restrictedQuery(NovaRequest $request, $query)
     {
+        if (is_customer()) {
+            return $query->where('id', '=', auth()->id());
+        }
+
         /** @var \Illuminate\Database\Query\Builder $query **/
         $query = $query
             ->select([
@@ -108,7 +119,19 @@ class User extends Resource
      */
     public static function scoutQuery(NovaRequest $request, $query)
     {
-        return self::restrictedQuery($request, $query);
+        if (admin_all_access()) {
+            return $query;
+        }
+
+        if (i('can view all in store', static::$model)) {
+            return $query
+                ->leftjoin('user_stores', 'user_stores.user_id', '=', 'users.id')
+                ->leftjoin('stores', 'stores.id', '=', 'user_stores.store_id')
+                ->where('stores.id', '=', get_store_id())
+                ->distinct();
+        }
+
+        return $query->where('id', '=', auth()->user()->id);
     }
 
     /**
@@ -131,6 +154,7 @@ class User extends Resource
      */
     public function fields(Request $request)
     {
+        $isStaff = is_staff();
         return [
             ID::make(__('ID'), 'id')
                 ->sortable()
@@ -162,33 +186,53 @@ class User extends Resource
             })
                 ->showOnIndex(admin_all_access())
                 ->showOnDetail(admin_all_access())
+                ->canSee(function () use ($isStaff) {
+                    return $isStaff;
+                })
                 ->exceptOnForms()
                 ->sortable(),
 
             Text::make('Name', function () {
-                return "$this->last_name, $this->first_name " . strtoupper(substr($this->middle_name, 1, 1));
+                $name = "$this->last_name, $this->first_name " . strtoupper(substr($this->middle_name, 1, 1));
+
+                if (strlen(trim($name)) <= 1) {
+                    return $this->name ?: $this->email;
+                }
+
+                return $name;
             })
                 ->exceptOnForms()
                 ->sortable(),
+
+            Text::make('Name')->required()->onlyOnForms(),
 
             Text::make('Team', function () {
                 return $this->team;
             })
                 ->exceptOnForms()
+                ->canSee(function () use ($isStaff) {
+                    return $isStaff;
+                })
                 ->sortable(),
 
             Text::make('Role', function () {
                 return $this->role;
             })
                 ->exceptOnForms()
-                ->sortable(),
+                ->sortable()
+                ->canSee(function () use ($isStaff) {
+                    return $isStaff;
+                }),
 
             Password::make('Password')
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8'),
 
-            BelongsToMany::make('Roles', 'roles', Role::class),
+            BelongsToMany::make('Roles', 'roles', Role::class)
+                ->canSee(function () use ($isStaff) {
+                    return $isStaff;
+                }),
             HasOne::make('Basic Information', 'information', \App\Nova\UserInformation::class)->sortable(),
             HasMany::make('Teams', 'teams', \App\Nova\GroupTeamMember::class)->sortable(),
             HasMany::make('Available Store(s)', 'stores', \App\Nova\UserStore::class)

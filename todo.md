@@ -1,8 +1,8 @@
 # Todo:
 
+[ ] - add policies for orders
 [x] - find a way to make store searchable in product page
 [x] - add policies for products
-[ ] - add policies for orders
 [x] - add number of orders in product via using this package:  saumini/count
 
 !! Priority

@@ -17,7 +17,6 @@
         "enmaboya/country-select": "^1.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "jameslkingsley/nova-stripe-theme": "^1.0",
         "laravel/framework": "^8.75",
         "laravel/nova": "*",
         "laravel/sanctum": "^2.11",

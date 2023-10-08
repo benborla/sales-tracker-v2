@@ -159,6 +159,9 @@ class Product extends Resource
             Text::make('SKU')->required(),
             Number::make('Remaining quantity in inventory', 'total_inventory_remaining')
                 ->rules('integer')
+                ->canSee(function () {
+                    return is_staff();
+                })
                 ->required(),
             Date::make('Manufactured Date', 'manufactured_date', function () {
                 return $this->manufactured_date->format('M d, Y');
@@ -200,7 +203,11 @@ class Product extends Resource
     protected function miscFields()
     {
         return [
-            RelationshipCount::make('Orders', 'orders')->exceptOnForms(),
+            RelationshipCount::make('Orders', 'orders')
+                ->canSee(function () {
+                    return is_staff();
+                })
+                ->exceptOnForms(),
             Textarea::make('Notes')->alwaysShow(),
         ];
     }
