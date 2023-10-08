@@ -72,7 +72,8 @@ class Order extends Resource
      */
     public function fields(Request $request)
     {
-        $customers = User::getCustomers()->with(['information'])->get()
+        $customers = User::getCustomers()
+            ->with(['information'])->get()
             ->mapWithKeys(function ($user) {
                 $name = $user->information['last_name'] . ', ' . $user->information['first_name'] . ' ' .
                     strtoupper(substr($user->information['middle_name'], 1, 1)) . '.';
@@ -89,6 +90,7 @@ class Order extends Resource
             Boolean::make('Approve Order?', 'is_approved')
                 ->trueValue(true)
                 ->falseValue(false)
+                ->default(i('can approve', static::$model))
                 ->canSee(function () {
                     return i('can approve', \App\Models\Order::class);
                 })
@@ -154,13 +156,12 @@ class Order extends Resource
                     ->searchable()
                     ->onlyOnForms(),
                 BelongsTo::make('Customer', 'user', \App\Nova\User::class)
+                    ->displayUsing(function () {
+                    $name = $this->user->information->fullName ?? $this->user->email;
+                    return $name;
+                })
                     ->exceptOnForms(),
             ], $this->getStoreField($request))),
-
-            new Panel('Agent', [
-                BelongsTo::make('Agent', 'user', \App\Nova\User::class)
-                    ->onlyOnDetail(),
-            ]),
 
             new Panel('Status', [
                 Badge::make('Order Status')->map([

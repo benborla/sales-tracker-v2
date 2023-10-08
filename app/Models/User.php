@@ -73,7 +73,7 @@ class User extends Authenticatable
     {
         return $query->whereHas('stores', function ($q) use ($store) {
             $q->where('store_id', '=', $store->id);
-        })->with(['stores']);
+        })->with(['stores', 'information']);
     }
 
     /**
@@ -128,11 +128,16 @@ class User extends Authenticatable
     public function scopeGetUsersByType($query, string $type, bool $activeOnly = true)
     {
         /** @var \Illuminate\Database\Eloquent\Builder $query **/
-        return $query
+        $query = $query
             ->select('users.*')
             ->join('user_information', 'user_information.user_id', '=', 'users.id')
+            ->join('user_stores', 'user_stores.user_id', '=', 'users.id')
             ->where('user_information.is_active', '=', $activeOnly)
             ->where('user_information.type', '=', $type);
+
+        if (! is_main_store()) {
+            return $query->where('user_stores.store_id', '=', get_store_id());
+        }
     }
 
     public function scopeGetCustomers($query, bool $activeOnly = true)
