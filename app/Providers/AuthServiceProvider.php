@@ -22,6 +22,8 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\Store' => 'App\Policies\StorePolicy',
         'App\Models\UserStore' => 'App\Policies\UserStorePolicy',
         'App\Models\GroupTeamMember' => 'App\Policies\GroupTeamMemberPolicy',
+        'App\Models\Product' => 'App\Policies\ProductPolicy',
+        'App\Models\ProductImage' => 'App\Policies\ProductImagePolicy',
     ];
 
     /**

@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Observers\OrderItemObserver;
 use App\Observers\OrderObserver;
+use App\Observers\ProductObserver;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
@@ -24,6 +26,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         parent::boot();
         Observable::make(Order::class, OrderObserver::class);
         Observable::make(OrderItem::class, OrderItemObserver::class);
+        Observable::make(Product::class, ProductObserver::class);
     }
 
     /**

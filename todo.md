@@ -1,5 +1,10 @@
 # Todo:
 
+[x] - find a way to make store searchable in product page
+[x] - add policies for products
+[ ] - add policies for orders
+[x] - add number of orders in product via using this package:  saumini/count
+
 !! Priority
 [x] - fix error on http://sales-tracker.local:8880/resources/roles/8
         - Not unique table/alias: role_user
@@ -27,11 +32,7 @@
     - [x] - it should update the inventory of the product after saving the order
     - [x] - in create / update page, add a rule to show an error if the
             entered quantity is greater than the product's inventory
-[ ] - multiple images on product
-    - [ ] add a media library
-    - Link: https://novapackages.com/?search=media&tag=all
-[ ] - use reseller_price of the user is a reseller
-	[ ] - add a reseller flag in the user table
+[x] - multiple images on product
 [x] - Add created_by and updated_by, approved_by fields in order
 [x] - Add is_approved column for orders
 [x] - Test new order columns
@@ -52,13 +53,25 @@ the set quantity for that product
 	[ ] - it should be an excel file.
 
 
+
 ### Resource:
 https://novapackages.com/packages/abordage/nova-html-card
 
 
 ## Rule based on value
+```php
 use Illuminate\Validation\Rule;
 
 Text::make('Email')->required(function ($request) {
     return $this->account_locked !== true;
 })->rules([Rule::requiredIf($this->account_locked)]),
+```
+
+## Hide certain fields based on permission
+```php
+        Text::make('Name')
+                ->sortable()
+                ->canSee(function ($request) {
+                    return $request->user()->can('viewProfile', $this);
+                }),
+```

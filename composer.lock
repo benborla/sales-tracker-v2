@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3e56ac4223830b8a7bf4a7a093a84a4",
+    "content-hash": "e163dda2981067962e9e2b41272361fe",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4755,6 +4755,51 @@
             "time": "2023-04-15T23:01:58+00:00"
         },
         {
+            "name": "saumini/count",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nsaumini/nova-field-count.git",
+                "reference": "55db5d804cf5489ccb077b0cef3e2d4202b1acda"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nsaumini/nova-field-count/zipball/55db5d804cf5489ccb077b0cef3e2d4202b1acda",
+                "reference": "55db5d804cf5489ccb077b0cef3e2d4202b1acda",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Saumini\\Count\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Saumini\\Count\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "issues": "https://github.com/nsaumini/nova-field-count/issues",
+                "source": "https://github.com/nsaumini/nova-field-count/tree/master"
+            },
+            "time": "2018-11-16T16:28:19+00:00"
+        },
+        {
             "name": "silvanite/brandenburg",
             "version": "1.5.2",
             "source": {
@@ -7370,6 +7415,46 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/2.2.6"
             },
             "time": "2023-01-03T09:29:04+00:00"
+        },
+        {
+            "name": "titasgailius/search-relations",
+            "version": "1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TitasGailius/nova-search-relations.git",
+                "reference": "ac999c8d3230573fe5bb81f50cbabfaa62da26c0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TitasGailius/nova-search-relations/zipball/ac999c8d3230573fe5bb81f50cbabfaa62da26c0",
+                "reference": "ac999c8d3230573fe5bb81f50cbabfaa62da26c0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Titasgailius\\SearchRelations\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova tool.",
+            "keywords": [
+                "laravel",
+                "nova",
+                "relations",
+                "search"
+            ],
+            "support": {
+                "issues": "https://github.com/TitasGailius/nova-search-relations/issues",
+                "source": "https://github.com/TitasGailius/nova-search-relations/tree/1.0.6"
+            },
+            "time": "2020-10-09T09:25:10+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -10272,5 +10357,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

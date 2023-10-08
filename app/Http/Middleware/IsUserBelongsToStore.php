@@ -25,7 +25,7 @@ class IsUserBelongsToStore
             return $next($request);
         }
 
-        $store = $request->query->get('store') ?: null;
+        $store = $request->get('store') ?: null;
 
         // @INFO: if store is equal to null, we assume that the user is accessing
         // the main sales tracker, now we need to check if the user is allowed to

@@ -4,48 +4,47 @@ namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Support\Facades\Gate;
 
 class UserPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user)
+    public function viewAny()
     {
         return i('can view', User::class);
     }
 
-    public function view(User $user)
+    public function view()
     {
         return i('can view', User::class);
     }
 
-    public function create(User $user)
+    public function create()
     {
         return i('can create', User::class);
     }
 
-    public function update(User $user)
+    public function update()
     {
         return i('can update', User::class);
     }
 
-    public function delete(User $user)
+    public function delete()
     {
         return i('can delete', User::class);
     }
 
-    public function addUser(User $user)
+    public function addUser()
     {
         return i('can assign', User::class);
     }
 
-    public function restore(User $user)
+    public function restore()
     {
         return i('can create', User::class);
     }
 
-    public function forceDelete(User $user)
+    public function forceDelete()
     {
         return i('can delete', User::class);
     }

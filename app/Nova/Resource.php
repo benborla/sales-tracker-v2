@@ -5,9 +5,11 @@ namespace App\Nova;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Symfony\Component\HttpFoundation\Request;
 use Laravel\Nova\Resource as NovaResource;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 abstract class Resource extends NovaResource
 {
+    use SearchesRelations;
 
     /**
      * Determine if this resource is available for navigation.

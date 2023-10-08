@@ -16,6 +16,7 @@ class GetPermissions
             \App\Permissions\Store::valueArray(),
             \App\Permissions\Product::valueArray(),
             \App\Permissions\Order::valueArray(),
+            \App\Permissions\ProductImage::valueArray(),
         );
     }
 

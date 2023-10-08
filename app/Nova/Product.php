@@ -2,9 +2,11 @@
 
 namespace App\Nova;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Number;
@@ -12,6 +14,7 @@ use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Panel;
+use Saumini\Count\RelationshipCount;
 use Vyuldashev\NovaMoneyField\Money;
 
 class Product extends Resource
@@ -49,8 +52,75 @@ class Product extends Resource
         'reseller_price',
         'upc',
         'asin',
-
+        'sku',
+        'made_from',
+        'notes',
     ];
+
+    /**
+     * The relationship columns that should be searched.
+     *
+     * @var array
+     */
+    public static $searchRelations = [
+        'store' => ['name'],
+    ];
+
+    /**
+     * @param |Laravel\Nova\Http\Requests\NovaRequest $request
+     * @param \Illuminate\Database\Query\Builder $query
+     *
+     * @return void
+     */
+    public static function restrictedQuery(NovaRequest $request, $query)
+    {
+        if (admin_all_access()) {
+            return $query;
+        }
+
+        if (i('can view all in store', static::$model)) {
+            return $query
+                ->where('store_id', '=', get_store_id());
+        }
+
+        abort(403);
+    }
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return self::restrictedQuery($request, $query);
+    }
+
+    /**
+     * Build a Scout search query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Laravel\Scout\Builder  $query
+     * @return \Laravel\Scout\Builder
+     */
+    public static function scoutQuery(NovaRequest $request, $query)
+    {
+        return self::restrictedQuery($request, $query);
+    }
+
+    /**
+     * Build a "detail" query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function detailQuery(NovaRequest $request, $query)
+    {
+        return self::restrictedQuery($request, $query);
+    }
 
     /**
      * Get the fields displayed by the resource.
@@ -63,7 +133,14 @@ class Product extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             BelongsTo::make('Store', 'store', \App\Nova\Store::class)
+                ->searchable()
                 ->display('name'),
+            Text::make('Last Update', 'updated_at', function () {
+                return $this->updated_at->format('M d, Y h:i:s A');
+            })->onlyOnDetail(),
+            Text::make('Updated By', 'updatedBy', function () {
+                return $this->updatedBy->information->fullName ?? $this->updatedBy->email;
+            })->onlyOnDetail(),
             new Panel('Basic Information', $this->basicInfoFields()),
             new Panel('Product Information', $this->productInfoFields()),
             new Panel('Images', $this->productImageField()),
@@ -77,13 +154,15 @@ class Product extends Resource
     {
         return [
             Text::make('Name')->required(),
-            Text::make('UPC')->required(),
-            Text::make('ASIN')->required(),
+            Text::make('UPC')->required()->onlyOnForms()->onlyOnDetail(),
+            Text::make('ASIN')->required()->onlyOnForms()->onlyOnDetail(),
             Text::make('SKU')->required(),
             Number::make('Remaining quantity in inventory', 'total_inventory_remaining')
                 ->rules('integer')
                 ->required(),
-            Date::make('Manufactured Date')->required(),
+            Date::make('Manufactured Date', 'manufactured_date', function () {
+                return $this->manufactured_date->format('M d, Y');
+            })->required(),
             Text::make('Made from', 'made_from')->required(),
         ];
     }
@@ -91,7 +170,7 @@ class Product extends Resource
     protected function productImageField()
     {
         return [
-
+            HasMany::make('Images', 'images', \App\Nova\ProductImage::class)
         ];
     }
 
@@ -99,14 +178,14 @@ class Product extends Resource
     {
         return [
             // INFO: product image url
-            Text::make('Product Image'),
-            Text::make('Weight Value'),
-            Text::make('Size'),
+            Text::make('Product Image')->onlyOnForms()->onlyOnDetail(),
+            Text::make('Weight Value')->onlyOnForms()->onlyOnDetail(),
+            Text::make('Size')->onlyOnForms()->onlyOnDetail(),
             Select::make('Weight Unit')->options([
                 'oz' => 'oz',
                 'fl/oz' => 'fl/oz',
                 'ml' => 'ml'
-            ])->default('oz'),
+            ])->default('oz')->onlyOnForms()->onlyOnDetail(),
         ];
     }
 
@@ -121,6 +200,7 @@ class Product extends Resource
     protected function miscFields()
     {
         return [
+            RelationshipCount::make('Orders', 'orders')->exceptOnForms(),
             Textarea::make('Notes')->alwaysShow(),
         ];
     }
