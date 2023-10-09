@@ -13,11 +13,13 @@ class OrderItemObserver
     public function created(OrderItem $orderItem)
     {
         deduct_from_product_inventory($orderItem);
+        update_total_payable($orderItem->order);
     }
 
     public function updated(OrderItem $orderItem)
     {
         deduct_from_product_inventory($orderItem);
+        update_total_payable($orderItem->order);
     }
 
     public function saving(OrderItem $orderItem)
@@ -29,41 +31,9 @@ class OrderItemObserver
             }
 
             $productId = $request->request->get('product') ?: null;
-            $quantity = $request->request->get('quantity') ?: 1;
-            $priceBasedOn = $request->request->get('price_based_on') ?: \App\Models\Order::PRICE_BASED_ON_RETAIL;
 
             if (!is_null($productId)) {
-                dd('triggered123');
-                $orderItems = $order->orderItems->toArray();
-                $orderItems[] = [
-                    'product_id' => (int) $productId,
-                    'quantity' => (int) $quantity
-                ];
-
-                /** @INFO: Combine all the same products and sum up their total quantity **/
-                $items = collect($orderItems)->groupBy('product_id')
-                    ->map(function ($group) {
-                        return [
-                            'product_id' => $group[0]['product_id'],
-                            'quantity' => $group->sum('quantity'),
-                        ];
-                    })->values()->all();
-
-                $productsPayable = $this->getTotalPayable($items, $priceBasedOn);
-
-
-                $order->total_sales = ($productsPayable + $order->shipping_fee)
-                    - ($order->tax_fee + $order->intermediary_fees);
-
-                // dd([
-                //     'total products payable' => $productsPayable,
-                //     'shipping fee' => $order->shipping_fee,
-                //     'tax_fee' => $order->tax_fee,
-                //     'intermediary_fees' => $order->intermediary_fees,
-                // ]);
-
-
-                $order->save();
+                update_total_payable($order);
             }
         });
     }
@@ -85,24 +55,6 @@ class OrderItemObserver
         // @INFO: Put back the quantity of the product
         add_to_product_inventory($orderItem);
         update_total_payable($orderItem->order);
-    }
-
-    private function getTotalPayable(array $orderItems, string $priceBasedOn)
-    {
-        if (!count($orderItems)) {
-            return 0;
-        }
-
-        $orderItems = collect($orderItems);
-        $productIds = Arr::pluck($orderItems, 'product_id');
-
-        return Product::whereIn('id', array_values($productIds))->get()->map(function ($product, $key) use ($orderItems, $priceBasedOn) {
-            $quantity = $orderItems->where('product_id', $product->id)->first()['quantity'] ?? 1;
-            $product->ordered_quantity = $quantity;
-            $product->total_quantity_price = $product->$priceBasedOn * $quantity;
-
-            return $product;
-        })->sum('total_quantity_price');
     }
 
     private function isActionAllowed(NovaRequest $request)
