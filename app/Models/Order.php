@@ -104,4 +104,16 @@ class Order extends Model
     {
         return $this->is_approved ? 'yes' : 'no';
     }
+
+    public function getProductPayableAttribute()
+    {
+        return $this->orderItems->sum('total_price');
+    }
+
+    public function saveQuietly(array $options = [])
+    {
+        return static::withoutEvents(function () use ($options) {
+            return $this->save($options);
+        });
+    }
 }

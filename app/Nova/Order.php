@@ -25,6 +25,7 @@ use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 use Vyuldashev\NovaMoneyField\Money;
 use App\Nova\Actions\ApproveOrder;
 use Laravel\Nova\Fields\Boolean;
+use InteractionDesignFoundation\HtmlCard\HtmlCard;
 
 class Order extends Resource
 {
@@ -215,7 +216,10 @@ class Order extends Resource
             ]),
 
             new Panel('Fees', [
-
+                Money::make('Product Payable', 'USD', 'product_payable')
+                    ->required()
+                    ->exceptOnForms()
+                    ->hideFromIndex(),
                 Money::make('Shipping Fee', 'USD', 'shipping_fee')
                     ->required()
                     ->hideFromIndex(),
@@ -264,7 +268,9 @@ class Order extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            (new HtmlCard())->width('1/2')->view('reports.test', ['name' => 'World'])->withoutCardStyles(true),
+        ];
     }
 
     /**
@@ -318,11 +324,6 @@ class Order extends Resource
     public static function detailQuery(NovaRequest $request, $query)
     {
         $order = parent::detailQuery($request, $query);
-        $orderToUpdate = $order->first();
-
-        if ($orderToUpdate instanceof OrderModel) {
-            update_total_payable($orderToUpdate);
-        }
 
         return $order;
     }

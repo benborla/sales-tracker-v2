@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "070c9dbfbb62c665f50616133a320255",
+    "content-hash": "542014a11ce0b5ec9c39be0e5f5709eb",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1905,6 +1905,61 @@
                 }
             ],
             "time": "2023-08-27T10:13:57+00:00"
+        },
+        {
+            "name": "interaction-design-foundation/nova-html-card",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/InteractionDesignFoundation/nova-html-card.git",
+                "reference": "7b1447661b34fda2ce9d2608957853a47818946b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/InteractionDesignFoundation/nova-html-card/zipball/7b1447661b34fda2ce9d2608957853a47818946b",
+                "reference": "7b1447661b34fda2ce9d2608957853a47818946b",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": "^3.0",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^9.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "InteractionDesignFoundation\\HtmlCard\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "InteractionDesignFoundation\\HtmlCard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card to display arbitrary HTML content",
+            "keywords": [
+                "card",
+                "html",
+                "laravel",
+                "markdown",
+                "nova",
+                "text"
+            ],
+            "support": {
+                "issues": "https://github.com/InteractionDesignFoundation/nova-html-card/issues",
+                "source": "https://github.com/InteractionDesignFoundation/nova-html-card/tree/2.0.0"
+            },
+            "time": "2021-12-06T19:37:00+00:00"
         },
         {
             "name": "laravel/framework",

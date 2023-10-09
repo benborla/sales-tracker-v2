@@ -24,11 +24,16 @@ class OrderItemObserver
     {
         $order = $orderItem->order;
         Nova::whenServing(function (NovaRequest $request) use ($order) {
+            if (! $this->isActionAllowed($request)) {
+                return;
+            }
+
             $productId = $request->request->get('product') ?: null;
             $quantity = $request->request->get('quantity') ?: 1;
             $priceBasedOn = $request->request->get('price_based_on') ?: \App\Models\Order::PRICE_BASED_ON_RETAIL;
 
             if (!is_null($productId)) {
+                dd('triggered123');
                 $orderItems = $order->orderItems->toArray();
                 $orderItems[] = [
                     'product_id' => (int) $productId,
@@ -46,8 +51,17 @@ class OrderItemObserver
 
                 $productsPayable = $this->getTotalPayable($items, $priceBasedOn);
 
-                $order->total_payable = ($productsPayable + $order->shipping_fee)
+
+                $order->total_sales = ($productsPayable + $order->shipping_fee)
                     - ($order->tax_fee + $order->intermediary_fees);
+
+                // dd([
+                //     'total products payable' => $productsPayable,
+                //     'shipping fee' => $order->shipping_fee,
+                //     'tax_fee' => $order->tax_fee,
+                //     'intermediary_fees' => $order->intermediary_fees,
+                // ]);
+
 
                 $order->save();
             }
@@ -70,6 +84,7 @@ class OrderItemObserver
     {
         // @INFO: Put back the quantity of the product
         add_to_product_inventory($orderItem);
+        update_total_payable($orderItem->order);
     }
 
     private function getTotalPayable(array $orderItems, string $priceBasedOn)
@@ -88,5 +103,10 @@ class OrderItemObserver
 
             return $product;
         })->sum('total_quantity_price');
+    }
+
+    private function isActionAllowed(NovaRequest $request)
+    {
+        return in_array($request->method(), ['PUT']);
     }
 }

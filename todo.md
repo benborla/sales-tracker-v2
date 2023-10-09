@@ -1,6 +1,9 @@
 # Todo:
 
-[ ] - add policies for orders
+[x] - Need to fix inconsistencies on order total payable
+    - need to see the computation of total payable in updates
+    - and on creation
+[x] - add policies for orders
 [x] - find a way to make store searchable in product page
 [x] - add policies for products
 [x] - add number of orders in product via using this package:  saumini/count

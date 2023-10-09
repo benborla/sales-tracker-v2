@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Select;
 
@@ -69,9 +70,15 @@ class OrderItem extends Resource
             Number::make('Quantity', 'quantity')->default('1'),
             BelongsTo::make('Order', 'order', \App\Nova\Order::class),
             BelongsTo::make('Product', 'product', \App\Nova\Product::class)->displayUsing(function ($product) {
-                $price = \number_format($product->retail_price, 2);
-                return "UPC: $product->upc | $product->name ($ $price)";
+                return $product->name;
             })->withSubtitles()->exceptOnForms(),
+
+            Number::make('Price', function () {
+                $priceBasedOn = $this->order->price_based_on;
+                $price = $this->product->$priceBasedOn;
+
+                return "$ " . number_format($price, 2);
+            })->exceptOnForms(),
 
             Select::make('Product', 'product_id')
                 ->withMeta(['data-field' => 'product-field'])
@@ -80,7 +87,7 @@ class OrderItem extends Resource
                 ->searchable()
                 ->onlyOnForms(),
 
-            Number::make('Remaining', 'product_remaining_quantity')->exceptOnForms(),
+            // Number::make('Remaining', 'product_remaining_quantity')->exceptOnForms(),
             Number::make('Total Price', 'formatted_total_price')
                 ->exceptOnForms()
         ];

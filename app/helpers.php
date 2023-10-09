@@ -146,29 +146,33 @@ if (!function_exists('update_total_payable')) {
     function update_total_payable(Order $order)
     {
         $orderItems = $order->orderItems->toArray();
-        $productsPayable = getTotalPayable($orderItems);
+        $priceBasedOn = $order->price_based_on;
+        $productsPayable = getTotalPayable($orderItems, $priceBasedOn);
 
         $order->total_sales = ($productsPayable + $order->shipping_fee)
             - ($order->tax_fee + $order->intermediary_fees);
-        $order->save();
+
+        $order->saveQuietly();
     }
 
-    function getTotalPayable(array $orderItems)
+    function getTotalPayable(array $orderItems, string $priceBasedOn)
     {
         if (!count($orderItems)) {
             return 0;
         }
 
         $orderItems = collect($orderItems);
-        $productIds = Arr::pluck($orderItems, 'product_id');
+        $productIds = array_values($orderItems->pluck('product_id')->all());
 
-        return Product::whereIn('id', array_values($productIds))->get()->map(function ($product, $key) use ($orderItems) {
-            $quantity = $orderItems->where('product_id', $product->id)->first()['quantity'] ?? 1;
-            $product->ordered_quantity = $quantity;
-            $product->total_quantity_price = $product->retail_price * $quantity;
+        return Product::whereIn('id', $productIds)
+            ->get()
+            ->map(function ($product, $key) use ($orderItems, $priceBasedOn) {
+                $quantity = $orderItems->where('product_id', $product->id)->first()['quantity'] ?? 1;
+                $product->ordered_quantity = $quantity;
+                $product->total_quantity_price = $product->$priceBasedOn * $quantity;
 
-            return $product;
-        })->sum('total_quantity_price') ?: 0;
+                return $product;
+        })->sum('total_quantity_price') ?:0;
     }
 }
 

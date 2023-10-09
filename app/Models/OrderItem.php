@@ -51,7 +51,9 @@ class OrderItem extends Model
      */
     public function getTotalPriceAttribute(): float
     {
-        return $this->product->retail_price * $this->quantity;
+        $priceBasedOn = $this->order->price_based_on;
+
+        return $this->product->$priceBasedOn * $this->quantity;
     }
 
     /**

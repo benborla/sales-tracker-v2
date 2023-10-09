@@ -34,12 +34,18 @@ class IsUserBelongsToStore
             return $next($request);
         }
 
-        if (! $store instanceof Store) {
-            abort(403);
+        if (!$store instanceof Store) {
+            auth()->logout();
+
+            return redirect('/')
+                ->with('redirectMessage', 'Redirecting...')
+                ->with('redirectStatusCode', 403)
+                ->with('redirectDelay', 2);
         }
 
         // @INFO: Check whether the user is allowed to access the store
-        if (auth()->check() &&
+        if (
+            auth()->check() &&
             auth()->user()->query()->withStore($store, auth()->user()->id)->get()->count()
         ) {
             return $next($request);
