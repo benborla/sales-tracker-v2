@@ -13,27 +13,44 @@ class OrderItemObserver
     public function created(OrderItem $orderItem)
     {
         deduct_from_product_inventory($orderItem);
-        update_total_payable($orderItem->order);
     }
 
     public function updated(OrderItem $orderItem)
     {
         deduct_from_product_inventory($orderItem);
-        update_total_payable($orderItem->order);
     }
 
     public function saving(OrderItem $orderItem)
     {
         $order = $orderItem->order;
         Nova::whenServing(function (NovaRequest $request) use ($order) {
-            if (! $this->isActionAllowed($request)) {
-                return;
-            }
 
-            $productId = $request->request->get('product') ?: null;
+            $productId = $request->request->get('product_id') ?: null;
+            $quantity = $request->request->get('quantity') ?: 1;
+            $priceBasedOn = $request->request->get('price_based_on') ?: \App\Models\Order::PRICE_BASED_ON_RETAIL;
 
             if (!is_null($productId)) {
-                update_total_payable($order);
+                $orderItems = $order->orderItems->toArray();
+                $orderItems[] = [
+                    'product_id' => (int) $productId,
+                    'quantity' => (int) $quantity
+                ];
+
+                /** @INFO: Combine all the same products and sum up their total quantity **/
+                $items = collect($orderItems)->groupBy('product_id')
+                    ->map(function ($group) {
+                        return [
+                            'product_id' => $group[0]['product_id'],
+                            'quantity' => $group->sum('quantity'),
+                        ];
+                    })->values()->all();
+
+                $productsPayable = get_total_payable($items, $priceBasedOn);
+
+                $order->total_sales = ($productsPayable + $order->shipping_fee)
+                    - ($order->tax_fee + $order->intermediary_fees);
+
+                $order->saveQuietly();
             }
         });
     }
@@ -55,10 +72,8 @@ class OrderItemObserver
         // @INFO: Put back the quantity of the product
         add_to_product_inventory($orderItem);
         update_total_payable($orderItem->order);
-    }
-
-    private function isActionAllowed(NovaRequest $request)
-    {
-        return in_array($request->method(), ['PUT']);
+        /** @INFO: refresh current page **/
+        /** @TODO: update this into Laravel code **/
+        header('Location: '.$_SERVER['REQUEST_URI']);
     }
 }

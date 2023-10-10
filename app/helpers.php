@@ -147,7 +147,7 @@ if (!function_exists('update_total_payable')) {
     {
         $orderItems = $order->orderItems->toArray();
         $priceBasedOn = $order->price_based_on;
-        $productsPayable = getTotalPayable($orderItems, $priceBasedOn);
+        $productsPayable = get_total_payable($orderItems, $priceBasedOn);
 
         $order->total_sales = ($productsPayable + $order->shipping_fee)
             - ($order->tax_fee + $order->intermediary_fees);
@@ -155,7 +155,7 @@ if (!function_exists('update_total_payable')) {
         $order->saveQuietly();
     }
 
-    function getTotalPayable(array $orderItems, string $priceBasedOn)
+    function get_total_payable(array $orderItems, string $priceBasedOn)
     {
         if (!count($orderItems)) {
             return 0;
