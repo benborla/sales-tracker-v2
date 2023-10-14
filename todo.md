@@ -7,6 +7,19 @@
 [ ] - Can generate daily, weekly, monthly, yearly and how many orders and shipment by
 store.
 
+## Dashboard
+
+Admin Only
+[ ] - Show number of stores
+[ ] - Show number of staffs
+[ ] - Show number of customers
+[ ] - Show total number of orders
+
+--
+
+In Order index page
+[ ] - add a card that will show the total number of orders (can only be accessed if user is admin, or user has ORDER_CAN_VIEW_TOTAL_ORDER_REPORTS permission)
+
 [x] - Need to fix inconsistencies on order total payable
     - need to see the computation of total payable in updates
     - and on creation

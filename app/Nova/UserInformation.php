@@ -8,7 +8,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\TextArea;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\Heading;
 use Enmaboya\CountrySelect\CountrySelect;
 use Digitalcloud\ZipCodeNova\ZipCode;
@@ -265,7 +265,7 @@ class UserInformation extends Resource
 
             Panel::make('Misc.', [
                 Heading::make('Misc.'),
-                TextArea::make('Notes')->nullable()->alwaysShow(),
+                Textarea::make('Notes')->nullable()->alwaysShow(),
             ])
         ];
     }
