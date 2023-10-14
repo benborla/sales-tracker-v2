@@ -6,7 +6,20 @@ use App\Models\User;
 use App\Models\UserInformation;
 use App\Models\Product;
 use App\Models\OrderItem;
-use Illuminate\Support\Arr;
+
+if (! function_exists('is_me')) {
+    /**
+     * Compares the provided $userId to the authenticated userId
+     *
+     * @param int $userId
+     *
+     * @return bool
+     */
+    function is_me(int $userId): bool
+    {
+        return (int) auth()->user()->id === $userId;
+    }
+}
 
 if (!function_exists('get_user_type')) {
     /**

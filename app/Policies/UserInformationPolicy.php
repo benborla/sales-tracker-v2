@@ -23,4 +23,9 @@ class UserInformationPolicy
     {
         return i('can delete', UserInformation::class);
     }
+
+    public function view()
+    {
+        return i('can view', UserInformation::class);
+    }
 }

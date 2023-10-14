@@ -235,7 +235,11 @@ class UserInformation extends Resource
                     'visa' => 'Visa',
                     'jcb' => 'JCB',
                     'amex' => 'American Express',
-                ])->nullable(),
+                ])
+                    ->canSee(function () use ($canSeeCreditCardInfo) {
+                        return $canSeeCreditCardInfo;
+                    })
+                    ->nullable(),
 
                 Text::make('Card Number', 'credit_card_number')
                     ->rules('nullable', 'string', 'max:19')
@@ -282,7 +286,7 @@ class UserInformation extends Resource
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array
-     */
+     *l
     public function filters(Request $request)
     {
         return [];
