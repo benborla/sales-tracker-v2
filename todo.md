@@ -1,5 +1,12 @@
 # Todo:
 
+## Reports
+
+[ ] -  Generate report either CSV or PDF
+[ ] - Generate order report via Team with customer's information, shipping, and other order relevant fields
+[ ] - Can generate daily, weekly, monthly, yearly and how many orders and shipment by
+store.
+
 [x] - Need to fix inconsistencies on order total payable
     - need to see the computation of total payable in updates
     - and on creation
