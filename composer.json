@@ -73,7 +73,7 @@
             "cp -R ./public/css ../../public_html/",
             "cp -R ./public/js ../../public_html/",
             "cp ./public/mix-manifest.json ../../public_html/",
-            "cp -R ./public/vendor ../../public_html/",
+            "cp -R ./public/vendor ../../public_html/"
         ]
     },
     "extra": {
