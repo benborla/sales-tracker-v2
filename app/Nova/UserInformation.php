@@ -81,7 +81,11 @@ class UserInformation extends Resource
     public function fields(Request $request)
     {
         $resourceId = (int) $request->get('viaResourceId') || null;
-        $user = $resourceId ? User::query()->where('id', '=', $resourceId)->first() : null;
+        /** @INFO: I forgot what this is for, will comment for now **/
+        // $user = $resourceId ? User::query()->where('id', '=', $resourceId)->first() : null;
+        $canSeeCreditCardInfo = i('can view credit card info', static::$model);
+        $canSeeShippingAddress = i('can view shipping address', static::$model);
+        $canSeeBillingAddress = i('can view billing address', static::$model);
 
         return [
             Panel::make('Details', [
@@ -137,12 +141,18 @@ class UserInformation extends Resource
                     ->nullable()
                     ->sortable()
                     ->rules('max:255')
+                    ->canSee(function ()  use ($canSeeBillingAddress) {
+                        return $canSeeBillingAddress;
+                    })
                     ->hideFromIndex(),
 
                 Text::make('City', 'billing_address_city')
                     ->nullable()
                     ->sortable()
                     ->rules('max:255')
+                    ->canSee(function ()  use ($canSeeBillingAddress) {
+                        return $canSeeBillingAddress;
+                    })
                     ->hideFromIndex(),
 
 
@@ -150,16 +160,25 @@ class UserInformation extends Resource
                     ->useFullNames()
                     ->nullable()
                     ->sortable()
+                    ->canSee(function ()  use ($canSeeBillingAddress) {
+                        return $canSeeBillingAddress;
+                    })
                     ->hideFromIndex(),
 
                 ZipCode::make('Zipcode', 'billing_address_zipcode')
                     ->nullable()
                     ->setCountry('US')
+                    ->canSee(function ()  use ($canSeeBillingAddress) {
+                        return $canSeeBillingAddress;
+                    })
                     ->hideFromIndex(),
 
                 CountrySelect::make('Country', 'billing_address_country')
                     ->only(['US'])
                     ->nullable()
+                    ->canSee(function ()  use ($canSeeBillingAddress) {
+                        return $canSeeBillingAddress;
+                    })
                     ->hideFromIndex()
             ]),
 
@@ -169,28 +188,43 @@ class UserInformation extends Resource
                     ->nullable()
                     ->sortable()
                     ->rules('max:255')
+                    ->canSee(function ()  use ($canSeeShippingAddress) {
+                        return $canSeeShippingAddress;
+                    })
                     ->hideFromIndex(),
 
                 Text::make('City', 'shipping_address_city')
                     ->nullable()
                     ->sortable()
                     ->rules('max:255')
+                    ->canSee(function ()  use ($canSeeShippingAddress) {
+                        return $canSeeShippingAddress;
+                    })
                     ->hideFromIndex(),
 
                 StateSelect::make('State', 'shipping_address_state')
                     ->useFullNames()
                     ->nullable()
                     ->sortable()
+                    ->canSee(function ()  use ($canSeeShippingAddress) {
+                        return $canSeeShippingAddress;
+                    })
                     ->hideFromIndex(),
 
                 ZipCode::make('Zipcode', 'shipping_address_zipcode')
                     ->nullable()
                     ->setCountry('US')
+                    ->canSee(function ()  use ($canSeeShippingAddress) {
+                        return $canSeeShippingAddress;
+                    })
                     ->hideFromIndex(),
 
                 CountrySelect::make('Country', 'shipping_address_country')
                     ->only(['US'])
                     ->nullable()
+                    ->canSee(function ()  use ($canSeeShippingAddress) {
+                        return $canSeeShippingAddress;
+                    })
                     ->hideFromIndex()
             ]),
 
@@ -204,15 +238,24 @@ class UserInformation extends Resource
                 ])->nullable(),
 
                 Text::make('Card Number', 'credit_card_number')
-                    ->rules('nullable', 'string', 'max:19'),
+                    ->rules('nullable', 'string', 'max:19')
+                    ->canSee(function () use ($canSeeCreditCardInfo) {
+                        return $canSeeCreditCardInfo;
+                    }),
 
                 Text::make('Expiration', 'credit_card_expiration_date')
                     ->rules('nullable', 'string', 'date_format:m/Y')
                     ->placeholder(\Carbon\Carbon::now()->format('m/Y'))
-                    ->help('<span class="text-success">Format: 01/2023</span>'),
+                    ->help('<span class="text-success">Format: 01/2023</span>')
+                    ->canSee(function () use ($canSeeCreditCardInfo) {
+                        return $canSeeCreditCardInfo;
+                    }),
 
                 Text::make('CVV', 'credit_card_cvv')
-                    ->rules('nullable', 'string', 'max:3'),
+                    ->rules('nullable', 'string', 'max:3')
+                    ->canSee(function () use ($canSeeCreditCardInfo) {
+                        return $canSeeCreditCardInfo;
+                    }),
             ]),
 
 
