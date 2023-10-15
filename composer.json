@@ -48,7 +48,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/helpers.php"
+            "app/helpers.php",
+            "vendor/digitalcloud/zipcode-nova/src/rules/ZipCodeRule.php"
         ]
     },
     "autoload-dev": {
