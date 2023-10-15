@@ -155,7 +155,8 @@ class User extends Authenticatable
         /** @var \Illuminate\Database\Query\Builder $query **/
         return $query
             ->leftJoin('group_team_members', 'group_team_members.user_id', '=', 'users.id')
-            ->leftJoin('group_teams', 'group_teams.id', '=', 'group_team_members.group_teams_id');
+            ->leftJoin('group_teams', 'group_teams.id', '=', 'group_team_members.group_teams_id')
+            ->where('group_teams.store_id', '=', get_store_id());
     }
 
     public function scopeGetUserTeamByStoreId($query, int $storeId, $userId = null)

@@ -126,14 +126,23 @@ class Order extends Resource
                 $user = $this->orderCreatedBy;
 
                 $name = $user->information->fullName ?? $user->email;
+                $isMe = $user->id === auth()->user()->id ? '(Me)' : '';
                 // @TODO: this should not be clickable, if the user has no
                 // user view access
                 $url = i('can view all', \App\Models\User::class) ? "/resources/users/{$user->id}" : '#';
-                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$name}</a>";
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$name} {$isMe}</a>";
             })
                 ->asHtml()
                 ->exceptOnForms()
                 ->onlyOnDetail(),
+
+            Text::make('Handled By Team', function () {
+                return $this->orderUpdatedBy->query()->getTeam()->first()->name ?? '-';
+            })
+            ->exceptOnForms()
+            ->onlyOnDetail(),
+
+
             Text::make('Last Update By', 'updatedBy', function ($user) {
                 $user = $this->orderUpdatedBy;
                 $name = $user->information->fullName ?? $user->email;

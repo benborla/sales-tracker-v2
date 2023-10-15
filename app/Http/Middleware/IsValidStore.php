@@ -9,6 +9,8 @@ use App\Models\Store;
 
 class IsValidStore
 {
+    private const WEB = 'www';
+
     /**
      * Handle an incoming request.
      *
@@ -20,6 +22,11 @@ class IsValidStore
     {
         $subdomain = explode('.', $request->getHost());
         $subdomain = current($subdomain);
+
+        /** @INFO: redirect to main route if www. is provided **/
+        if ($subdomain === self::WEB) {
+            return redirect(config('app.url'));
+        }
 
         if ($subdomain === config('app.main_store')) {
             $request->merge(['is_main_store' => true]);
