@@ -7,6 +7,14 @@ use App\Models\UserInformation;
 use App\Models\Product;
 use App\Models\OrderItem;
 
+if (! function_exists('get_main_store_domain')) {
+    function get_main_store_domain()
+    {
+        return preg_replace('(^https?://)', '', config('app.url'));
+    }
+
+}
+
 if (! function_exists('is_me')) {
     /**
      * Compares the provided $userId to the authenticated userId

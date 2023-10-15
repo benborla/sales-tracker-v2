@@ -72,8 +72,14 @@ class Store extends Resource
 
             Trix::make('Description'),
             Boolean::make('Is Active'),
+
+            Text::make('Domain', function () {
+                return $this->domain . '.' . get_main_store_domain();
+            })->exceptOnForms(),
+
             Text::make('Sub-domain', 'domain')
                 ->sortable()
+                ->onlyOnForms()
                 ->rules('required', 'max:255'),
         ];
     }
