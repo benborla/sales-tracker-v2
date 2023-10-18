@@ -17,6 +17,14 @@ class OrderObserver
                 $order->created_by = auth()->user()->id;
                 $order->updated_by = auth()->user()->id;
                 $order->invoice_id = "INV-$uniqueReference";
+                $order->total_sales = get_total_sales(
+                    (array) $request->get('orderItems'),
+                    (float) $request->get('shipping_fee'),
+                    (float) $request->get('tax_fee'),
+                    (float) $request->get('intermediary_fees'),
+                    $request->get('price_based_on')
+                );
+                $order->payment_payload = '{}';
 
                 if (!is_main_store()) {
                     /** @INFO: automatically fill if sites is in tenant mode **/
@@ -26,12 +34,7 @@ class OrderObserver
         });
     }
 
-    public function created(Order $order)
-    {
-        update_total_payable($order);
-    }
-
-    public function saved(Order $order)
+    public function updated(Order $order)
     {
         $order->updated_by = auth()->user()->id;
 

@@ -12,7 +12,12 @@ class DisableCacheOnDev
     public function handle(Request $request, Closure $next)
     {
         if (!config()->get('env') === self::APP_DEV) {
-            $next($request);
+            return $next($request);
+        }
+
+        /** @INFO: Ignore and proceed if endpoint is /exports **/
+        if (str_contains($request->getPathInfo(), 'export')) {
+            return $next($request);
         }
 
         $response = $next($request);

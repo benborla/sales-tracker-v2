@@ -212,7 +212,7 @@ class Order extends Resource
                     'USPS' => 'USPS',
                     'FedEx' => 'FedEx',
                     'Pickup' => 'Pickup',
-                ]),
+                ])->required(),
                 Text::make('Tracking Reference'),
 
             ]),

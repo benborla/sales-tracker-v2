@@ -2,6 +2,8 @@
 
 ## Reports
 
+Resource: https://docs.laravel-excel.com/3.1/exports/testing.html
+
 [ ] -  Generate report either CSV or PDF
 [ ] - Generate order report via Team with customer's information, shipping, and other order relevant fields
 [ ] - Can generate daily, weekly, monthly, yearly and how many orders and shipment by

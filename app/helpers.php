@@ -164,14 +164,31 @@ if (!function_exists('store')) {
 }
 
 if (!function_exists('update_total_payable')) {
+
+    function get_total_sales(
+        array $orderItems,
+        float $shippingFee,
+        float $taxFee,
+        float $intermediaryFees,
+        string $priceBasedOn
+    ) {
+        $totalProductPayable = get_total_payable($orderItems, $priceBasedOn);
+
+        return ($totalProductPayable + $shippingFee) - ($taxFee + $intermediaryFees);
+    }
+
     function update_total_payable(Order $order)
     {
         $orderItems = $order->orderItems->toArray();
         $priceBasedOn = $order->price_based_on;
-        $productsPayable = get_total_payable($orderItems, $priceBasedOn);
 
-        $order->total_sales = ($productsPayable + $order->shipping_fee)
-            - ($order->tax_fee + $order->intermediary_fees);
+        $order->total_sales = get_total_sales(
+            $orderItems,
+            $order->shipping_fee,
+            $order->tax_fee,
+            $order->intermediary_fees,
+            $priceBasedOn
+        );
 
         $order->saveQuietly();
     }
