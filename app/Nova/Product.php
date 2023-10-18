@@ -164,7 +164,9 @@ class Product extends Resource
                 })
                 ->required(),
             Date::make('Manufactured Date', 'manufactured_date', function () {
-                return $this->manufactured_date->format('M d, Y');
+                if ($this->manufactured_date) {
+                    return $this->manufactured_date->format('M d, Y');
+                }
             })->required(),
             Text::make('Made from', 'made_from')->required(),
         ];
