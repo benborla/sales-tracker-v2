@@ -13,6 +13,33 @@ class UserInformation extends Model
     public const USER_TYPE_STAFF = 'staff';
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'user_id',
+        'type',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'shipping_address',
+        'shipping_address_city',
+        'shipping_address_state',
+        'shipping_address_zipcode',
+        'shipping_address_country',
+        'billing_address',
+        'billing_address_city',
+        'billing_address_state',
+        'billing_address_zipcode',
+        'billing_address_country',
+        'credit_card_type',
+        'credit_card_number',
+        'credit_card_expiration_date',
+        'credit_card_cvv'
+    ];
+
+    /**
      * The attributes that should be cast.
      *
      * @var array

@@ -16,23 +16,6 @@ class ProductsImport implements ToModel, WithProgressBar, WithHeadingRow
 
     private const NONE_VALUE = 'None';
 
-    // public function mapping(): array
-    // {
-    //     return [
-    //         'name' => 'A2',
-    //         'sku' => 'C2',
-    //         'asin' => 'D2',
-    //         'upc' => 'E2',
-    //         'size' => 'F2',
-    //         'weight_unit' => 'G2',
-    //         'total_inventory_remaining' => 'K2',
-    //         'manufactured_date' => 'L2',
-    //         'made_from' => 'M2',
-    //         'retail_price' => 'N2',
-    //         'reseller_price' => 'O2',
-    //     ];
-    // }
-
     /**
     * @param array $row
     *

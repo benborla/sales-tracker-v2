@@ -29,6 +29,7 @@ class Order extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'store_id',
         'email',
         'user_id',
         'num_of_boxes_shipped',
@@ -47,6 +48,9 @@ class Order extends Model
         'updated_by',
         'is_approved',
         'price_based_on',
+        'payment_payload',
+        'order_status',
+        'payment_status',
     ];
 
     /**
