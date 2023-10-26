@@ -180,6 +180,7 @@ class Order extends Resource
                     OrderModel::ORDER_STATUS_IN_TRANSIT => 'warning',
                     OrderModel::ORDER_STATUS_FULFILLED => 'success',
                     OrderModel::ORDER_STATUS_FAILED => 'danger',
+                    OrderModel::ORDER_STATUS_BLACKLIST => 'danger',
                 ]),
 
                 Badge::make('Payment Status')->map([
@@ -195,6 +196,7 @@ class Order extends Resource
                     OrderModel::ORDER_STATUS_IN_TRANSIT => 'In Transit',
                     OrderModel::ORDER_STATUS_FULFILLED => 'Fulfilled',
                     OrderModel::ORDER_STATUS_FAILED => 'Failed',
+                    OrderModel::ORDER_STATUS_BLACKLIST => 'danger',
                 ])->default(OrderModel::ORDER_STATUS_NEW)->onlyOnForms(),
 
                 Select::make('Payment Status')->options([

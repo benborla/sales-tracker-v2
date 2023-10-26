@@ -35,16 +35,20 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
         $user = User::where('name', '=', $row['customer_name'])->first();
 
         if ($user) {
+            /** @INFO: Cast scientific notation into integer, but retain value if value is equal to "none" **/
+            $referenceId = $row['reference_id'] === self::NONE_VALUE ? self::NONE_VALUE : (int) $row['reference_id'];
             /** @INFO: stored in a variable just in case we need to append more information **/
             $notes = $row['notes'];
             $orderStatus = $row['order_status'] === 'Active' ? Order::ORDER_STATUS_FULFILLED : Order::ORDER_STATUS_FAILED;
+            /** @INFO: Remove whitespace in invoice_id **/
+            $invoiceId = str_replace(' ', '', $row['invoice_id']);
 
             return new Order([
                 'user_id' => $user->id,
                 'store_id' => 1,
                 'email' => $user->email,
-                'invoice_id' => $row['invoice_id'],
-                'reference_id' => $row['reference_id'],
+                'invoice_id' => $invoiceId,
+                'reference_id' => $referenceId,
                 'num_of_boxes_shipped' => $row['num_of_boxes_shipped'],
                 'tax_fee' => $row['tax_fee'],
                 'shipping_fee' => $row['shipping_fee'],
@@ -54,7 +58,7 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
                 'created_by' => 3,
                 'updated_by' => 3,
                 'notes' => $notes,
-                'order_status' => $orderStatus,
+                'order_status' => strtolower($orderStatus),
                 'payment_status' => Order::PAYMENT_STATUS_SUCCESS,
                 'payment_payload' => '{}',
                 'sales_channel' => $row['sales_channel'],

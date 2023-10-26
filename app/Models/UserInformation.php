@@ -70,4 +70,11 @@ class UserInformation extends Model
     {
         return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
     }
+
+    public function getShippingAddressInfoAttribute(): string
+    {
+        return $this->attributes['shipping_address'] .
+            $this->attributes['shipping_address_city'] .
+            $this->attributes['shipping_address_state']
+    }
 }

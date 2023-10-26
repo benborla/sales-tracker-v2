@@ -12,6 +12,7 @@ class Order extends Model
     public const ORDER_STATUS_IN_TRANSIT = 'in_transit';
     public const ORDER_STATUS_FULFILLED = 'fulfilled';
     public const ORDER_STATUS_FAILED = 'failed';
+    public const ORDER_STATUS_BLACKLIST = 'blacklist';
 
     public const PAYMENT_STATUS_AWAITING_PAYMENT = 'awaiting_payment';
     public const PAYMENT_STATUS_SUCCESS = 'payment_received';
