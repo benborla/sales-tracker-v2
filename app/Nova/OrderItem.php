@@ -54,6 +54,7 @@ class OrderItem extends Resource
         $products = Product::query()
             ->getActive()
             ->getProductsBasedOnStore()
+            ->where('total_inventory_remaining', '>=', 1)
             ->with(['store'])
             ->get()
             ->mapWithKeys(function ($product) {
