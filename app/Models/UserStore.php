@@ -17,6 +17,16 @@ class UserStore extends Model
     public $timestamps = false;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'user_id',
+        'store_id',
+    ];
+
+    /**
      * Retrieve the user model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

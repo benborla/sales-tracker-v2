@@ -71,10 +71,22 @@ class UserInformation extends Model
         return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
     }
 
+    private function selectedAddress(string $addressType = 'shipping')
+    {
+        return $this->attributes[$addressType . '_address'] .
+            $this->attributes[$addressType . '_address_city'] . ', ' .
+            $this->attributes[$addressType . '_address_state'] . ', ' .
+            $this->attributes[$addressType . '_address_zipcode'] . ' ' .
+            $this->attributes[$addressType . '_address_country'];
+    }
+
     public function getShippingAddressInfoAttribute(): string
     {
-        return $this->attributes['shipping_address'] .
-            $this->attributes['shipping_address_city'] .
-            $this->attributes['shipping_address_state']
+        return $this->selectedAddress();
+    }
+
+    public function getBillingAddressInfoAttribute(): string
+    {
+        return $this->selectedAddress('billing');
     }
 }

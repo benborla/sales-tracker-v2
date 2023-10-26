@@ -26,6 +26,7 @@ use Vyuldashev\NovaMoneyField\Money;
 use App\Nova\Actions\ApproveOrder;
 use Laravel\Nova\Fields\Boolean;
 use InteractionDesignFoundation\HtmlCard\HtmlCard;
+use App\Models\UserInformation;
 
 class Order extends Resource
 {
@@ -139,8 +140,8 @@ class Order extends Resource
             Text::make('Handled By Team', function () {
                 return $this->orderUpdatedBy->query()->getTeam()->first()->name ?? '-';
             })
-            ->exceptOnForms()
-            ->onlyOnDetail(),
+                ->exceptOnForms()
+                ->onlyOnDetail(),
 
 
             Text::make('Last Update By', 'updatedBy', function ($user) {
@@ -167,10 +168,27 @@ class Order extends Resource
                     ->onlyOnForms(),
                 BelongsTo::make('Customer', 'user', \App\Nova\User::class)
                     ->displayUsing(function () {
-                    $name = $this->user->information->fullName ?? $this->user->email;
-                    return $name;
-                })
+                        $name = $this->user->information->fullName ?? $this->user->email;
+                        return $name;
+                    })
                     ->exceptOnForms(),
+
+                Text::make('Shipping Address', 'shipping_address_info', function () {
+                    return $this->user->information->shipping_address_info;
+                })
+                ->canSee(function () {
+                    return i('can view shipping address', UserInformation::class);
+                })
+                    ->onlyOnDetail(),
+
+                Text::make('Billing Address', 'billing_address_info', function () {
+                    return $this->user->information->billing_address_info;
+                })
+                ->canSee(function () {
+                    return i('can view billing address', UserInformation::class);
+                })
+                ->onlyOnDetail(),
+
             ], $this->getStoreField($request))),
 
             new Panel('Status', [

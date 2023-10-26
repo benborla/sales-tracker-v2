@@ -3,13 +3,17 @@
 namespace App\Imports;
 
 use App\Models\Order;
+use App\Models\Role;
+use App\Models\Store;
 use App\Models\User;
 use App\Models\UserInformation;
+use App\Models\UserStore;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithProgressBar;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 
@@ -69,7 +73,6 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
                 'shipper' => $row['shipping_method'],
                 'total_sales' => $row['total_sales'],
             ]);
-
         }
     }
 
@@ -123,6 +126,33 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
                 'shipping_address_zipcode' => $row['shipping_zipcode'],
                 'shipping_address_country' => 'USA',
             ])->count();
+
+            /** @INFO: Only assign if the query is successful **/
+            if ($success) {
+                // Find the information of the store "Infinite Naturals"
+                $store = Store::where('name', '=', 'Infinite Naturals')->first();
+                $role = Role::where('slug', '=', UserInformation::USER_TYPE_CUSTOMER)->first();
+
+                if ($store) {
+                    // Assign customer to a store
+                    UserStore::updateOrCreate([
+                        'user_id' => $user->id,
+                        'store_id' => $store->id
+                    ]);
+                }
+
+                // assign CUSTOMER role to customer
+                // @INFO: Had to do it this way because when using the ->assignRole
+                // method, it's giving a duplicate error, and I can't find the
+                // model for the `role_user` table. This is just a workaround
+                DB::table('role_user')->insertOrIgnore([
+                    'user_id' => $user->id,
+                    'role_id' => $role->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+            }
         }
 
         return (bool) $success;
