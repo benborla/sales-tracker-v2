@@ -63,6 +63,19 @@ class UserInformation extends Model
         return $this->query()->where('type', '=', self::USER_TYPE_CUSTOMER);
     }
 
+    public function scopeGetStaffs()
+    {
+        /** @var \Illuminate\Database\Query\Builder $query **/
+        $query = $this->query();
+
+        if (!is_main_store()) {
+            $query->leftJoin('user_stores', 'user_stores.user_id', '=', 'user_information.user_id')
+                ->where('user_stores.store_id', '=', get_store_id());
+        }
+
+        return $query->where('type', '=', self::USER_TYPE_STAFF);
+    }
+
     /**
      * @return string
      */

@@ -137,7 +137,7 @@ class User extends Authenticatable
             ->where('user_information.is_active', '=', $activeOnly)
             ->where('user_information.type', '=', $type);
 
-        if (! is_main_store()) {
+        if (!is_main_store()) {
             return $query->where('user_stores.store_id', '=', get_store_id());
         }
     }
@@ -191,5 +191,15 @@ class User extends Authenticatable
     public function teams(): HasMany
     {
         return $this->hasMany(GroupTeamMember::class);
+    }
+
+    public function getAvailableStoresAttribute()
+    {
+        $userStores = [];
+        foreach ($this->stores()->get()->pluck('store') as $key => $store) {
+            $userStores[] = $store->name;
+        }
+
+        return implode(', ', $userStores);
     }
 }

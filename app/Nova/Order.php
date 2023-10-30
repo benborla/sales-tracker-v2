@@ -67,6 +67,13 @@ class Order extends Resource
     ];
 
     /**
+     * The pagination per-page options configured for this resource.
+     *
+     * @return array
+     */
+    public static $perPageOptions = [5, 10, 20, 30, 50];
+
+    /**
      * Get the fields displayed by the resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -176,18 +183,18 @@ class Order extends Resource
                 Text::make('Shipping Address', 'shipping_address_info', function () {
                     return $this->user->information->shipping_address_info;
                 })
-                ->canSee(function () {
-                    return i('can view shipping address', UserInformation::class);
-                })
+                    ->canSee(function () {
+                        return i('can view shipping address', UserInformation::class);
+                    })
                     ->onlyOnDetail(),
 
                 Text::make('Billing Address', 'billing_address_info', function () {
                     return $this->user->information->billing_address_info;
                 })
-                ->canSee(function () {
-                    return i('can view billing address', UserInformation::class);
-                })
-                ->onlyOnDetail(),
+                    ->canSee(function () {
+                        return i('can view billing address', UserInformation::class);
+                    })
+                    ->onlyOnDetail(),
 
             ], $this->getStoreField($request))),
 
@@ -298,7 +305,7 @@ class Order extends Resource
     public function cards(Request $request)
     {
         return [
-            (new HtmlCard())->width('1/2')->view('reports.test', ['name' => 'World'])->withoutCardStyles(true),
+            (new HtmlCard())->width('full')->view('reports.orders', [])->withoutCardStyles(true),
         ];
     }
 

@@ -19,5 +19,5 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => ['web', 'auth']], function () {
-    Route::get('export/orders', [ReportController::class, 'exportOrders']);
+    Route::post('export/orders', [ReportController::class, 'exportOrders'])->name('export.orders');
 });

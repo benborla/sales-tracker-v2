@@ -121,4 +121,26 @@ class Order extends Model
             return $this->save($options);
         });
     }
+
+    public static function orderStatuses(): array
+    {
+        return [
+            self::ORDER_STATUS_NEW,
+            self::ORDER_STATUS_PROCESSING,
+            self::ORDER_STATUS_IN_TRANSIT,
+            self::ORDER_STATUS_FULFILLED,
+            self::ORDER_STATUS_FAILED,
+            self::ORDER_STATUS_BLACKLIST
+        ];
+    }
+
+    public static function paymentStatuses(): array
+    {
+        return [
+            self::PAYMENT_STATUS_AWAITING_PAYMENT,
+            self::PAYMENT_STATUS_SUCCESS,
+            self::PAYMENT_STATUS_FAILED,
+            self::PAYMENT_STATUS_REFUND
+        ];
+    }
 }

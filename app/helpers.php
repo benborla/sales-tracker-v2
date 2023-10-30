@@ -7,6 +7,8 @@ use App\Models\UserInformation;
 use App\Models\Product;
 use App\Models\OrderItem;
 
+define('APP_SELECT_ALL', '*');
+
 if (! function_exists('get_main_store_domain')) {
     function get_main_store_domain()
     {
