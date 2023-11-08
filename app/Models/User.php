@@ -106,13 +106,32 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeGetUserByRole($query, string $role)
+    public function scopeGetUserByRole($query, string|array $role)
     {
-        return $query->join('role_user AS ru', 'ru.user_id', '=', 'users.id')
+        /** @var \Illuminate\Database\Query\Builder $query **/
+        $query = $query->select([
+            'users.*',
+            'r.name',
+            'r.slug',
+            'ui.first_name',
+            'ui.middle_name',
+            'ui.last_name',
+            'ui.is_active',
+        ]);
+
+        $query->join('role_user AS ru', 'ru.user_id', '=', 'users.id')
             ->join('roles AS r', 'r.id', '=', 'ru.role_id')
-            ->join('user_information AS ui', 'ui.user_id', '=', 'users.id')
-            ->where('r.name', $role)
-            ->where('ui.is_active', '=', true);
+            ->leftJoin('user_information AS ui', 'ui.user_id', '=', 'users.id');
+
+        if (is_string($role)) {
+            $query->where('r.slug', '=', $role);
+        }
+
+        if (is_array($role)) {
+            $query->whereIn('r.slug', $role);
+        }
+
+        return $query;
     }
 
     /**
@@ -124,7 +143,7 @@ class User extends Authenticatable
      */
     public function scopeGetTeamLeads($query)
     {
-        return $this->scopeGetUserByRole($query, 'Team Leader');
+        return $this->scopeGetUserByRole($query, ['team-leader', 'sales-tracker-admin']);
     }
 
     public function scopeGetUsersByType($query, string $type, bool $activeOnly = true)

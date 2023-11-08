@@ -39,4 +39,12 @@ class GroupTeamMember extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function staff(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

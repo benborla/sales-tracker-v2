@@ -13,6 +13,8 @@ use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use Laravel\Nova\Observable;
+use App\Models\User;
+use App\Observers\UserObserver;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -27,6 +29,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         Observable::make(Order::class, OrderObserver::class);
         Observable::make(OrderItem::class, OrderItemObserver::class);
         Observable::make(Product::class, ProductObserver::class);
+        Observable::make(User::class, UserObserver::class);
     }
 
     /**

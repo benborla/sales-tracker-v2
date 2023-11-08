@@ -64,7 +64,7 @@ class GroupTeam extends Resource
         $teamLeads = User::getTeamLeads()
             ->get()
             ->mapWithKeys(function ($user) {
-                return [$user->user_id => "$user->last_name, $user->first_name $user->middle_name ($user->email)"];
+                return [$user->id => "$user->name ($user->email)"];
             })->toArray();
 
         return [

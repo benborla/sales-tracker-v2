@@ -76,8 +76,9 @@ class GroupTeamMember extends Resource
         return [
             ID::make(__('ID'), 'id')->hideFromIndex()->sortable(),
             BelongsTo::make('Group Team', 'groupTeam')->display('name'),
-            BelongsTo::make('Members', 'user', \App\Nova\User::class)
+            BelongsTo::make('Members', 'staff', \App\Nova\User::class)
                 ->rules(new DuplicateUserInGroup($request->user, $request->groupteam))
+                ->default('{{resourceId}}')
                 ->display('email'),
         ];
     }
