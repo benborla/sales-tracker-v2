@@ -9,6 +9,32 @@ Resource: https://docs.laravel-excel.com/3.1/exports/testing.html
 [ ] - Can generate daily, weekly, monthly, yearly and how many orders and shipment by
 store.
 
+### Staff
+[x] - Email
+[x] - Default Password: password
+[x] - First Name
+[x] - Last Name
+[x] - Middle Name
+[x] - Store
+[x] - Team
+[x] - Position
+[x] - Need to verify the creation of users
+        - Check the following:
+        - Table `users`
+        - Table `user_information`
+        - Table `user_roles`
+        - Table `user_stores`
+
+### Customer
+[ ] - Email
+[ ] - Default Password: password
+[ ] - First Name
+[ ] - Last Name
+[ ] - Middle Name
+[ ] - Shipping Address
+[ ] - Billing Address
+[ ] - Credit Card Info
+
 ## Dashboard
 
 Admin Only
