@@ -29,18 +29,14 @@ class UserObserver
             $attributes['email_verified_at'] = now();
             $attributes['remember_token'] = \Illuminate\Support\Str::random(10);
 
+            foreach ((new UserInformation)->getFillable() as $field) {
+                unset($attributes[$field]);
+            }
+
             unset(
                 $attributes['store'],
                 $attributes['role'],
                 $attributes['staff'],
-                $attributes['first_name'],
-                $attributes['middle_name'],
-                $attributes['last_name'],
-                $attributes['billing_address'],
-                $attributes['billing_address_city'],
-                $attributes['billing_address_state'],
-                $attributes['billing_address_zipcode'],
-                $attributes['billing_address_country'],
                 $attributes['team'],
             );
 

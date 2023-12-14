@@ -26,14 +26,14 @@ store.
         - Table `user_stores`
 
 ### Customer
-[ ] - Email
-[ ] - Default Password: password
-[ ] - First Name
-[ ] - Last Name
-[ ] - Middle Name
-[ ] - Shipping Address
-[ ] - Billing Address
-[ ] - Credit Card Info
+[x] - Email
+[x] - Default Password: password
+[x] - First Name
+[x] - Last Name
+[x] - Middle Name
+[x] - Shipping Address
+[x] - Billing Address
+[x] - Credit Card Info
 
 ## Dashboard
 

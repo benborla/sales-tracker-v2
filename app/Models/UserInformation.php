@@ -19,6 +19,7 @@ class UserInformation extends Model
      */
     protected $fillable = [
         'user_id',
+        'is_active',
         'type',
         'first_name',
         'middle_name',
@@ -36,7 +37,10 @@ class UserInformation extends Model
         'credit_card_type',
         'credit_card_number',
         'credit_card_expiration_date',
-        'credit_card_cvv'
+        'credit_card_cvv',
+        'notes',
+        'mobile_number',
+        'telephone_number',
     ];
 
     /**

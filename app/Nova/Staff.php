@@ -31,7 +31,9 @@ class Staff extends AbstractUserBase
     public function fields(Request $request)
     {
         return [
-            Text::make('Type', 'type')
+            Text::make('Type', 'type', function () {
+                return $this->information->type ?? 'staff';
+            })
                 ->default('staff')
                 ->onlyOnForms()
                 ->readonly(true),
@@ -39,18 +41,21 @@ class Staff extends AbstractUserBase
             Select::make('Store', 'store')
                 ->options($this->getStores())
                 ->onlyOnForms()
+                ->hideWhenUpdating()
                 ->required(),
 
             Select::make('Position', 'role')
                 ->options($this->getRoles())
                 ->searchable()
                 ->onlyOnForms()
+                ->hideWhenUpdating()
                 ->required(),
 
             Select::make('Team', 'team')
                 ->options($this->getTeams())
                 ->searchable()
-                ->onlyOnForms(),
+                ->onlyOnForms()
+                ->hideWhenUpdating(),
 
             Text::make('Email')
                 ->sortable()
