@@ -15,6 +15,7 @@ use Enmaboya\CountrySelect\CountrySelect;
 use Dniccum\StateSelect\StateSelect;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Panel;
 use Bissolli\NovaPhoneField\PhoneNumber;
 
@@ -35,6 +36,8 @@ class Customer extends AbstractUserBase
         $canSeeBillingAddress = i('can view billing address', static::$model);
 
         return [
+            $this->displayStoresTextField(),
+
             Text::make('Type', 'type', function () {
                 return $this->information->type ?? 'customer';
             })
@@ -279,7 +282,9 @@ class Customer extends AbstractUserBase
                 Textarea::make('Notes', 'notes', function () {
                     return $this->information->notes;
                 })->nullable()->alwaysShow(),
-            ])
+            ]),
+
+            HasMany::make('Orders', 'orders', Order::class),
         ];
     }
 }

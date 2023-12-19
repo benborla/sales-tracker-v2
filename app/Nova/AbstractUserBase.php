@@ -236,7 +236,7 @@ abstract class AbstractUserBase extends Resource
         /** @var \Illuminate\Database\Query\Builder $query **/
         $query = GroupTeam::query();
 
-        if (! is_main_store()) {
+        if (!is_main_store()) {
             $query->where('store_id', get_store_id());
         }
 
@@ -244,5 +244,45 @@ abstract class AbstractUserBase extends Resource
             ->get()
             ->pluck('name', 'id')
             ->toArray();
+    }
+
+    /**
+     * Dispaly the lists of stores available for the user
+     *
+     * @return \Laravel\Nova\Fields\Text
+     */
+    protected function displayStoresTextField(): Text
+    {
+        return Text::make('Store', function () {
+            if (admin_all_access()) {
+                return $this->stores->implode('store.name', ', ');
+            }
+
+            return store()->name;
+        })
+            ->showOnIndex(admin_all_access())
+            ->showOnDetail(admin_all_access())
+            ->canSee(function () {
+                return is_staff();
+            })
+            ->exceptOnForms()
+            ->sortable();
+    }
+
+    /**
+     * Display the role of the user
+     *
+     * @return \Laravel\Nova\Fields\Text
+     */
+    protected function displayRoleTextField(): Text
+    {
+        return Text::make('Role', function () {
+            return $this->roles->implode('name', ', ');
+        })
+            ->exceptOnForms()
+            ->sortable()
+            ->canSee(function () {
+                return is_staff();
+            });
     }
 }

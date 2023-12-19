@@ -19,6 +19,13 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class User extends Resource
 {
     /**
+     * Indicates if the resource should be displayed in the sidebar.
+     *
+     * @var bool
+     */
+    public static $displayInNavigation = false;
+
+    /**
      * The logical group associated with the resource.
      *
      * @var string

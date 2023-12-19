@@ -31,6 +31,8 @@ class Staff extends AbstractUserBase
     public function fields(Request $request)
     {
         return [
+            $this->displayStoresTextField(),
+            $this->displayRoleTextField(),
             Text::make('Type', 'type', function () {
                 return $this->information->type ?? 'staff';
             })

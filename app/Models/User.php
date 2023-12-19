@@ -221,4 +221,9 @@ class User extends Authenticatable
 
         return implode(', ', $userStores);
     }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
 }
