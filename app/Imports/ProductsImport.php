@@ -27,7 +27,6 @@ class ProductsImport implements ToModel, WithProgressBar, WithHeadingRow
             return;
         }
 
-
         list($weightUnit, $weightValue) = $this->identifyWeightUnit($row);
 
         return new Product([
