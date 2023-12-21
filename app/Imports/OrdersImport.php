@@ -3,6 +3,8 @@
 namespace App\Imports;
 
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
@@ -22,6 +24,7 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
     use Importable;
 
     private const NONE_VALUE = 'None';
+    private const DEFAULT_STORE_ID = 1;
 
     /**
      * @param array $row
@@ -47,9 +50,9 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
             /** @INFO: Remove whitespace in invoice_id **/
             $invoiceId = str_replace(' ', '', $row['invoice_id']);
 
-            return new Order([
+            $order = new Order([
                 'user_id' => $user->id,
-                'store_id' => 1,
+                'store_id' => self::DEFAULT_STORE_ID,
                 'email' => $user->email,
                 'invoice_id' => $invoiceId,
                 'reference_id' => $referenceId,
@@ -75,6 +78,22 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
                 'shipper' => $row['shipping_method'],
                 'total_sales' => $row['total_sales'],
             ]);
+
+            $order->save();
+
+            // assign order to order item
+            $product = Product::query()
+                ->where('name', 'like', '%' . $row['order_product_name'] . '%')
+                ->andWhere('store_id', '=', self::DEFAULT_STORE_ID)
+                ->first();
+            if (!is_null($product)) {
+                $order->orderItems()->create([
+                    'product_id' => $product->id,
+                    'quantity' => (int) $row['quantity']
+                ]);
+            }
+
+            return $order;
         }
     }
 
@@ -153,7 +172,6 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-
             }
         }
 
