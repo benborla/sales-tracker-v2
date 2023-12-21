@@ -8,7 +8,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 use App\Nova\AbstractUserBase;
 use App\Models\UserInformation;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\TextArea;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\Select;
 use Digitalcloud\ZipCodeNova\ZipCode;
 use Enmaboya\CountrySelect\CountrySelect;
