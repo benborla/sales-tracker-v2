@@ -24,6 +24,28 @@ class Customer extends AbstractUserBase
     public static $type = UserInformation::USER_TYPE_CUSTOMER;
 
     /**
+     * The columns that should be searched.
+     *
+     * @var array
+     */
+    public static $search = [
+        'email',
+    ];
+
+    /**
+     * Get the searchable columns for the resource.
+     *
+     * @return array
+     */
+    public static function searchableRelations(): array
+    {
+        // @TODO: Add gatekeeper permission here
+        return [
+            'information' => ['first_name', 'middle_name', 'last_name'],
+            'stores.store' => ['name'],
+        ];
+    }
+    /**
      * Get the fields displayed by the resource.
      *
      * @param  \Illuminate\Http\Request  $request
