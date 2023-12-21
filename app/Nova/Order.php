@@ -233,12 +233,17 @@ class Order extends Resource
             ]),
 
             new Panel('Shipping Information', [
-                Number::make('Total Boxes To Ship', 'num_of_boxes_shipped'),
+                Number::make('Total Items To Ship', 'num_of_boxes_shipped'),
                 Select::make('Shipper')->options([
                     'UPS' => 'UPS',
                     'USPS' => 'USPS',
                     'FedEx' => 'FedEx',
                     'Pickup' => 'Pickup',
+                ])->required(),
+                Select::make('Item Type')->options([
+                    'unknown' => 'N/A',
+                    'envelope' => 'Envelope',
+                    'box' => 'Box',
                 ])->required(),
                 Text::make('Tracking Reference'),
 

@@ -36,6 +36,7 @@ class Order extends Model
         'num_of_boxes_shipped',
         'shipper',
         'shipping_fee',
+        'item_type',
         'tax_fee',
         'intermediary_fees',
         'tracking_type',
