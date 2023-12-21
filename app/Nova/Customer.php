@@ -45,6 +45,7 @@ class Customer extends AbstractUserBase
             'stores.store' => ['name'],
         ];
     }
+
     /**
      * Get the fields displayed by the resource.
      *
