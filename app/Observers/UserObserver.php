@@ -75,6 +75,32 @@ class UserObserver
         });
     }
 
+    public function updating(User $user)
+    {
+        Nova::whenServing(function (NovaRequest $request) use ($user) {
+
+            if (!$this->isChangeFromStaffOrCustomerResource($request)) {
+                return;
+            }
+
+            $attributes = $user->getAttributes();
+
+            foreach ((new UserInformation)->getFillable() as $field) {
+                unset($attributes[$field]);
+            }
+            $user->setRawAttributes($attributes);
+        });
+    }
+
+    public function updated(User $user)
+    {
+        Nova::whenServing(function (NovaRequest $request) use ($user) {
+            $userInformation = $request->only((new UserInformation)->getFillable());
+
+            $user->information->update($userInformation);
+        });
+    }
+
     /**
      * Adds the user to the specified store
      *
