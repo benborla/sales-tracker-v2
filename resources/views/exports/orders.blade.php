@@ -24,6 +24,8 @@
         <th>Number of items to ship</th>
         <th>Tracking Reference</th>
         <th>Order Created By</th>
+        <th>Order Created At</th>
+        <th>Order Updated At</th>
         <th>Notes</th>
     </tr>
     </thead>
@@ -54,6 +56,8 @@
             <td>{{ $order->num_of_boxes_shipped }}</td>
             <td>{{ $order->tracking_reference }}</td>
             <td>{{ $order->orderCreatedBy->name }}</td>
+            <td>{{ $order->created_at->format('Y-m-d') }}</td>
+            <td>{{ $order->updated_at->format('Y-m-d') }}</td>
             <td>{{ $order->notes }}</td>
         </tr>
     @endforeach

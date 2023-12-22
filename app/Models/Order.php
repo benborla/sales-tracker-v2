@@ -91,6 +91,8 @@ class Order extends Model
         'payment_payload',
         'order_status',
         'payment_status',
+        'updated_at',
+        'created_at'
     ];
 
     /**

@@ -72,7 +72,7 @@ class Order extends Resource
      *
      * @return array
      */
-    public static $perPageOptions = [5, 10, 20, 30, 50];
+    public static $perPageOptions = [5, 10, 20];
 
     /**
      * Get the searchable columns for the resource.

@@ -50,7 +50,9 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
             /** @INFO: Remove whitespace in invoice_id **/
             $invoiceId = str_replace(' ', '', $row['invoice_id']);
 
-            $order = new Order([
+            $order = new Order();
+            $order->timestamps = false;
+            $order->fill([
                 'user_id' => $user->id,
                 'store_id' => self::DEFAULT_STORE_ID,
                 'email' => $user->email,
