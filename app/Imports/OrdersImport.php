@@ -84,7 +84,7 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
             // assign order to order item
             $product = Product::query()
                 ->where('name', 'like', '%' . $row['order_product_name'] . '%')
-                ->andWhere('store_id', '=', self::DEFAULT_STORE_ID)
+                ->where('store_id', '=', self::DEFAULT_STORE_ID)
                 ->first();
             if (!is_null($product)) {
                 $order->orderItems()->create([
@@ -110,11 +110,11 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
         $user = User::updateOrCreate(
             /** @INFO: check whether this email exists or not **/
             [
-                'email' => $email,
+                'email' => trim($email)
             ],
             /** @INFO: payload to insert or update **/
             [
-                'name' => $row['customer_name'],
+                'name' => trim($row['customer_name']),
                 'email' => $email,
                 'email_verified_at' => now(),
                 'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
@@ -126,6 +126,11 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
 
         if ($user->id) {
             $success = UserInformation::updateOrCreate([
+                'first_name' => $name['firstName'],
+                'last_name' => $name['lastName'],
+                'middle_name' => $name['middleName'],
+            ],
+            [
                 'user_id' => $user->id,
                 'type' => UserInformation::USER_TYPE_CUSTOMER,
                 'first_name' => $name['firstName'],
@@ -161,17 +166,6 @@ class OrdersImport implements ToModel, WithProgressBar, WithHeadingRow, WithCalc
                         'store_id' => $store->id
                     ]);
                 }
-
-                // assign CUSTOMER role to customer
-                // @INFO: Had to do it this way because when using the ->assignRole
-                // method, it's giving a duplicate error, and I can't find the
-                // model for the `role_user` table. This is just a workaround
-                DB::table('role_user')->insertOrIgnore([
-                    'user_id' => $user->id,
-                    'role_id' => $role->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
             }
         }
 

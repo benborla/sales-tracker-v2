@@ -63,7 +63,7 @@ class OrderItem extends Resource
                 $remainingInventory = (int) $product->total_inventory_remaining >= 1 ?
                     'Stock: ' . $product->total_inventory_remaining : 'Out of stock';
 
-                return [$product->id => "$store | $product->name (UPC: $product->upc) | $remainingInventory"];
+                return [$product->id => "$store » $product->name (UPC: $product->upc)"];
             })->toArray();
 
         return [

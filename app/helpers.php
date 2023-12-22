@@ -172,9 +172,14 @@ if (!function_exists('update_total_payable')) {
         float $shippingFee,
         float $taxFee,
         float $intermediaryFees,
-        string $priceBasedOn
+        string $priceBasedOn,
+        string $salesChannel
     ) {
         $totalProductPayable = get_total_payable($orderItems, $priceBasedOn);
+
+        if ($salesChannel === \App\Models\Order::ORDER_SALES_CHANNEL_OFFICE) {
+            return $totalProductPayable + $shippingFee + $taxFee + $intermediaryFees;
+        }
 
         return ($totalProductPayable + $shippingFee) - ($taxFee + $intermediaryFees);
     }
@@ -189,7 +194,8 @@ if (!function_exists('update_total_payable')) {
             $order->shipping_fee,
             $order->tax_fee,
             $order->intermediary_fees,
-            $priceBasedOn
+            $priceBasedOn,
+            $order->sales_channel
         );
 
         $order->saveQuietly();

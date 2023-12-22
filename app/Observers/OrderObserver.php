@@ -22,7 +22,8 @@ class OrderObserver
                     (float) $request->get('shipping_fee'),
                     (float) $request->get('tax_fee'),
                     (float) $request->get('intermediary_fees'),
-                    $request->get('price_based_on')
+                    $request->get('price_based_on'),
+                    $request->get('sales_channel')
                 );
                 $order->payment_payload = '{}';
 

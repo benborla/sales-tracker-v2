@@ -28,7 +28,7 @@
                 </div>
                <div class="w-1/3 flex justify-center items-center">
                     <div class="px-8 py-6 w-1/5">
-                        <label for="created_by" class="inline-block text-80 pt-2 leading-tight">Created By</label>
+                        <label for="created_by" class="inline-block text-80 pt-2 leading-tight">Order Created By</label>
                     </div>
                     <div class="py-6 px-8 w-full">
                         @php
@@ -36,7 +36,7 @@
                         $users = \App\Models\UserInformation::query()->getStaffs()->get();
                         @endphp
                         <select id="created_by" class="block w-full form-control-sm form-select" name="created_by">
-                            <option value="*" selected>Everyone</option>
+                            <option value="*" selected>All</option>
                             @foreach ($users as $key => $user)
                             @php
                             $stores = '';

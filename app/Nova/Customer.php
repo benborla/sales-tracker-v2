@@ -74,6 +74,14 @@ class Customer extends AbstractUserBase
                 ->required()
                 ->hideWhenUpdating(),
 
+            Text::make('Name', 'full_name', function () {
+                $name = $this->information->full_name ?? '';
+                $url = "/resources/{$this->uriKey()}/{$this->id}";
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$name}</a>";
+            })
+                ->asHtml()
+                ->onlyOnIndex(),
+
             Text::make('Email')
                 ->sortable()
                 ->rules('required', 'email', 'max:254')
@@ -81,11 +89,7 @@ class Customer extends AbstractUserBase
                 ->updateRules('unique:users,email,{{resourceId}}')
                 ->onlyOnForms(),
 
-            Text::make('Email', function () {
-                $url = "/resources/{$this->uriKey()}/{$this->id}";
-                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$this->email}</a>";
-            })
-                ->asHtml()
+            Text::make('Email', 'email')
                 ->exceptOnForms(),
 
             Boolean::make('Is Active', 'is_active', function () {
@@ -108,9 +112,6 @@ class Customer extends AbstractUserBase
                 return $this->information->middle_name ?? '';
             })->required()->hideFromIndex(),
 
-            Text::make('Name', 'full_name', function () {
-                return $this->information->full_name ?? '';
-            })->onlyOnIndex(),
 
             Text::make('Created At', 'created_at', function () {
                 return $this->created_at->format('M. d Y');
@@ -201,7 +202,7 @@ class Customer extends AbstractUserBase
             /** @INFO: Shipping Address **/
             Panel::make('Shiping Address', [
                 Text::make('Address', 'shipping_address', function () {
-                    return $this->information->shipping_address;
+                    return $this->information->shipping_address ?? '';
                 })
                     ->nullable()
                     ->sortable()
@@ -212,18 +213,18 @@ class Customer extends AbstractUserBase
                     ->hideFromIndex(),
 
                 Text::make('City', 'shipping_address_city', function () {
-                    return $this->information->shipping_address_city;
+                    return $this->information->shipping_address_city ?? '';
                 })
                     ->nullable()
                     ->sortable()
                     ->rules('max:255')
                     ->canSee(function ()  use ($canSeeShippingAddress) {
-                        return $canSeeShippingAddress;
+                        return $canSeeShippingAddress ?? '';
                     })
                     ->hideFromIndex(),
 
                 StateSelect::make('State', 'shipping_address_state', function () {
-                    return $this->information->shipping_address_state;
+                    return $this->information->shipping_address_state ?? '';
                 })
                     ->useFullNames()
                     ->nullable()
@@ -234,7 +235,7 @@ class Customer extends AbstractUserBase
                     ->hideFromIndex(),
 
                 ZipCode::make('Zipcode', 'shipping_address_zipcode', function () {
-                    return $this->information->shipping_address_zipcode;
+                    return $this->information->shipping_address_zipcode ?? '';
                 })
                     ->nullable()
                     ->setCountry('US')
@@ -244,7 +245,7 @@ class Customer extends AbstractUserBase
                     ->hideFromIndex(),
 
                 CountrySelect::make('Country', 'shipping_address_country', function () {
-                    return $this->information->shipping_address_country;
+                    return $this->information->shipping_address_country ?? '';
                 })
                     ->only(['US'])
                     ->nullable()
@@ -257,7 +258,7 @@ class Customer extends AbstractUserBase
             /** INFO: Credit Card Info **/
             Panel::make('Credit Card', [
                 Select::make('Type', 'credit_card_type', function () {
-                    return $this->information->credit_card_type;
+                    return $this->information->credit_card_type ?? '';
                 })->options([
                     'mastercard' => 'MasterCard',
                     'visa' => 'Visa',
@@ -271,7 +272,7 @@ class Customer extends AbstractUserBase
                     ->nullable(),
 
                 Text::make('Card Number', 'credit_card_number', function () {
-                    return $this->information->credit_card_number;
+                    return $this->information->credit_card_number ?? '';
                 })
                     ->rules('nullable', 'string', 'max:19')
                     ->hideFromIndex()
@@ -280,7 +281,7 @@ class Customer extends AbstractUserBase
                     }),
 
                 Text::make('Expiration', 'credit_card_expiration_date', function () {
-                    return $this->information->credit_card_expiration_date;
+                    return $this->information->credit_card_expiration_date ?? '';
                 })
                     ->rules('nullable', 'string', 'date_format:m/Y')
                     ->placeholder(\Carbon\Carbon::now()->format('m/Y'))
@@ -291,7 +292,7 @@ class Customer extends AbstractUserBase
                     }),
 
                 Text::make('CVV', 'credit_card_cvv', function () {
-                    return $this->information->credit_card_cvv;
+                    return $this->information->credit_card_cvv ?? '';
                 })
                     ->rules('nullable', 'string', 'max:3')
                     ->hideFromIndex()
@@ -303,7 +304,7 @@ class Customer extends AbstractUserBase
             /** INFO: Misc fields **/
             Panel::make('Misc.', [
                 Textarea::make('Notes', 'notes', function () {
-                    return $this->information->notes;
+                    return $this->information->notes ?? '';
                 })->nullable()->alwaysShow(),
             ]),
 

@@ -5,6 +5,40 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @class Order
+ * @property int $id
+ * @property int $store_id
+ * @property string $email
+ * @property int $user_id
+ * @property int $num_of_boxes_shipped
+ * @property string $shipper
+ * @property float $shipping_fee
+ * @property string $item_type
+ * @property float $tax_fee
+ * @property float $intermediary_fees
+ * @property string $tracking_type
+ * @property string $tracking_reference
+ * @property float $total_sales
+ * @property string $notes
+ * @property int $invoice_id
+ * @property int $reference_id
+ * @property string $sales_channel
+ * @property int $created_by
+ * @property int $updated_by
+ * @property bool $is_approved
+ * @property string $price_based_on
+ * @property string $payment_payload
+ * @property string $order_status
+ * @property string $payment_status
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\Models\User $user
+ * @property-read \App\Models\User $orderCreatedBy
+ * @property-read \App\Models\User $orderUpdatedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OrderItem[] $orderItems
+ * @property-read \App\Models\Store $store
+ */
 class Order extends Model
 {
     public const ORDER_STATUS_NEW = 'new';
@@ -21,6 +55,10 @@ class Order extends Model
 
     public const PRICE_BASED_ON_RETAIL = 'retail_price';
     public const PRICE_BASED_ON_RESELLER = 'reseller_price';
+
+    public const ORDER_SALES_CHANNEL_OFFICE = 'office';
+    public const ORDER_SALES_CHANNEL_AMAZON = 'amazon';
+    public const ORDER_SALES_CHANNEL_EBAY = 'ebay';
 
     use HasFactory;
 

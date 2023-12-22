@@ -1,5 +1,41 @@
 # Todo:
 
+# Changes Needed ASAP
+
+## Orders
+[x] - Generate report:
+    - rename Created By to Order Created By
+    - Not generating a report
+[x] - When clicking the name of customer in the orders, it should route to the customer page
+[x] - Rename Product Payable to Product Price
+[x] - Rename Total Payable to Total
+[x] - Update Sales Channel, make it as a dropdown
+        - Values:
+            - Office
+            - Amazon
+            - EBay
+        - Each channel has its own computation on total, for Office, just sum everything
+        - For Amazon and eBay, the current computation as is
+[x] - Remove stock text in product selection
+
+## Orders Import
+[x] - User Creation, it should not create duplicate user
+        - No need to assign user to a customer role
+
+## Products
+[x] - Unable to select store in product creation
+[x] - UPC, ASIN, and size fields not showing up
+
+## Customers
+[ ] - Create Customer (TextArea error)
+        - Server Error
+
+## Staff
+[x] - Table view: Make name clickable instead of email
+
+## Roles
+[x] - Remove the customer role
+
 ## Reports
 
 Resource: https://docs.laravel-excel.com/3.1/exports/testing.html

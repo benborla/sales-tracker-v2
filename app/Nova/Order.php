@@ -19,6 +19,7 @@ use Laravel\Nova\Panel;
 use Yassi\NestedForm\NestedForm;
 use App\Nova\Filters\FilterByOrderStatus;
 use App\Nova\Filters\FilterByPaymentStatus;
+use App\Nova\Filters\FilterBySalesChannel;
 use App\Nova\Filters\FilterByCreatedAt;
 use App\Nova\Filters\FilterByUpdatedAt;
 use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
@@ -74,6 +75,21 @@ class Order extends Resource
     public static $perPageOptions = [5, 10, 20, 30, 50];
 
     /**
+     * Get the searchable columns for the resource.
+     *
+     * @return array
+     */
+    public static function searchableRelations(): array
+    {
+        // @TODO: Add gatekeeper permission here
+        return [
+            'user' => ['email'],
+            'user.information' => ['first_name', 'middle_name', 'last_name'],
+            'store' => ['name'],
+        ];
+    }
+
+    /**
      * Get the fields displayed by the resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -113,6 +129,16 @@ class Order extends Resource
                 ])
                 ->onlyOnForms()
                 ->required(true),
+
+            Select::make('Sales Channel', 'sales_channel')
+                ->options([
+                    OrderModel::ORDER_SALES_CHANNEL_OFFICE => 'Office',
+                    OrderModel::ORDER_SALES_CHANNEL_AMAZON => 'Amazon',
+                    OrderModel::ORDER_SALES_CHANNEL_EBAY => 'eBay',
+                ])->default(OrderModel::ORDER_SALES_CHANNEL_OFFICE)
+                ->onlyOnForms()
+                ->required(true),
+
             Badge::make('Price Based On')->map([
                 OrderModel::PRICE_BASED_ON_RETAIL => 'success',
                 OrderModel::PRICE_BASED_ON_RESELLER => 'info'
@@ -137,7 +163,7 @@ class Order extends Resource
                 $isMe = $user->id === auth()->user()->id ? '(Me)' : '';
                 // @TODO: this should not be clickable, if the user has no
                 // user view access
-                $url = i('can view all', \App\Models\User::class) ? "/resources/users/{$user->id}" : '#';
+                $url = i('can view all', \App\Models\User::class) ? "/resources/staff/{$user->id}" : '#';
                 return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$name} {$isMe}</a>";
             })
                 ->asHtml()
@@ -156,7 +182,7 @@ class Order extends Resource
                 $name = $user->information->fullName ?? $user->email;
                 // @TODO: this should not be clickable, if the user has no
                 // user view access
-                $url = i('can view all', \App\Models\User::class) ? "/resources/users/{$user->id}" : '#';
+                $url = i('can view all', \App\Models\User::class) ? "/resources/staff/{$user->id}" : '#';
                 return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$name}</a>";
             })
                 ->asHtml()
@@ -173,7 +199,7 @@ class Order extends Resource
                     ->options($customers)
                     ->searchable()
                     ->onlyOnForms(),
-                BelongsTo::make('Customer', 'user', \App\Nova\User::class)
+                BelongsTo::make('Customer', 'user', \App\Nova\Customer::class)
                     ->displayUsing(function () {
                         $name = $this->user->information->fullName ?? $this->user->email;
                         return $name;
@@ -244,7 +270,8 @@ class Order extends Resource
                     'unknown' => 'N/A',
                     'envelope' => 'Envelope',
                     'box' => 'Box',
-                ])->required(),
+                ])->required()->hideFromIndex(),
+
                 Text::make('Tracking Reference'),
 
             ]),
@@ -257,7 +284,7 @@ class Order extends Resource
             ]),
 
             new Panel('Fees', [
-                Money::make('Product Payable', 'USD', 'product_payable')
+                Money::make('Product Price', 'USD', 'product_payable')
                     ->required()
                     ->exceptOnForms()
                     ->hideFromIndex(),
@@ -271,7 +298,7 @@ class Order extends Resource
                     ->required()
                     ->hideFromIndex(),
 
-                Number::make('Total Payable', 'total_sales')
+                Number::make('Total Price', 'total_sales')
                     ->step(0.01)
                     ->displayUsing(function ($fee) {
                         return '<p class="font-bold text-xs text-danger">$ ' . number_format($fee, 2) . '</p>';
@@ -280,9 +307,6 @@ class Order extends Resource
             ]),
 
             new Panel('Misc', [
-                Text::make('Sales Channel')
-                    ->rules('required', 'string', 'max:20')
-                    ->required(),
                 Textarea::make('Notes')->alwaysShow()
             ])
         ];
@@ -324,6 +348,7 @@ class Order extends Resource
     {
         return [
             new FilterByOrderStatus,
+            new FilterBySalesChannel,
             new FilterByPaymentStatus,
             new FilterByCreatedAt,
             new FilterByUpdatedAt,

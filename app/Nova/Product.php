@@ -16,6 +16,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Panel;
 use Saumini\Count\RelationshipCount;
 use Vyuldashev\NovaMoneyField\Money;
+use App\Models\Store;
 
 class Product extends Resource
 {
@@ -130,32 +131,60 @@ class Product extends Resource
      */
     public function fields(Request $request)
     {
+        $stores = [];
+
+        if (!is_main_store()) {
+            $stores = Store::where('id', get_store_id())->get();
+        } else {
+            $stores = Store::all();
+        }
+
+        // map stores with keys
+        $stores = $stores->mapWithKeys(function (Store $store) {
+            return [$store->id => $store->name];
+        })->toArray();
+
+
         return [
-            ID::make(__('ID'), 'id')->sortable(),
+            ID::make(__('ID'), 'id')->sortable()->hideFromIndex(),
             BelongsTo::make('Store', 'store', \App\Nova\Store::class)
-                ->searchable()
+                ->exceptOnForms()
                 ->display('name'),
+
+            Select::make('Store', 'store_id')
+                ->withMeta(['data-field' => 'store-field'])
+                ->required()
+                ->options($stores)
+                ->searchable()
+                ->onlyOnForms(),
+
             Text::make('Last Update', 'updated_at', function () {
                 return $this->updated_at->format('M d, Y h:i:s A');
             })->onlyOnDetail(),
             Text::make('Updated By', 'updatedBy', function () {
                 return $this->updatedBy->information->fullName ?? $this->updatedBy->email;
             })->onlyOnDetail(),
+
             new Panel('Basic Information', $this->basicInfoFields()),
             new Panel('Product Information', $this->productInfoFields()),
             new Panel('Images', $this->productImageField()),
             new Panel('Pricing', $this->pricingFields()),
             new Panel('Misc.', $this->miscFields()),
-
         ];
     }
 
     protected function basicInfoFields()
     {
         return [
-            Text::make('Name')->required(),
-            Text::make('UPC')->required()->onlyOnForms()->onlyOnDetail(),
-            Text::make('ASIN')->required()->onlyOnForms()->onlyOnDetail(),
+            Text::make('Name', function () {
+                $url = "/resources/{$this->uriKey()}/{$this->id}";
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$this->name}</a>";
+            })
+                ->asHtml()
+                ->onlyOnIndex(),
+            Text::make('Name')->required()->hideFromIndex(),
+            Text::make('UPC')->required()->hideFromIndex(),
+            Text::make('ASIN')->required()->hideFromIndex(),
             Text::make('SKU')->required(),
             Number::make('Remaining quantity in inventory', 'total_inventory_remaining')
                 ->rules('integer')
@@ -183,14 +212,13 @@ class Product extends Resource
     {
         return [
             // INFO: product image url
-            Text::make('Product Image')->onlyOnForms()->onlyOnDetail(),
-            Text::make('Weight Value')->onlyOnForms()->onlyOnDetail(),
-            Text::make('Size')->onlyOnForms()->onlyOnDetail(),
+            Text::make('Weight Value')->hideFromIndex(),
+            Text::make('Size')->hideFromIndex(),
             Select::make('Weight Unit')->options([
                 'oz' => 'oz',
                 'fl/oz' => 'fl/oz',
                 'ml' => 'ml'
-            ])->default('oz')->onlyOnForms()->onlyOnDetail(),
+            ])->default('oz')->hideFromIndex(),
         ];
     }
 

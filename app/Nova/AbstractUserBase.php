@@ -131,6 +131,7 @@ abstract class AbstractUserBase extends Resource
             'users.name as users.full_name',
             'stores.name as store_name',
         ]);
+        $query->distinct();
         $query->join('user_information', 'user_information.user_id', '=', 'users.id');
         $query->leftJoin('user_stores', 'user_stores.user_id', '=', 'user_information.user_id');
         $query->leftJoin('stores', 'stores.id', '=', 'user_stores.store_id');
