@@ -1,3 +1,5 @@
+@if(admin_all_access())
+
 @if ($errors->any())
 <div class="alert alert-danger">
     <ul>
@@ -113,3 +115,5 @@
         </button>
     </div>
 </form>
+
+@endif
