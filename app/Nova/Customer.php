@@ -54,9 +54,9 @@ class Customer extends AbstractUserBase
      */
     public function fields(Request $request)
     {
-        $canSeeCreditCardInfo = i('can view credit card info', static::$model);
-        $canSeeShippingAddress = i('can view shipping address', static::$model);
-        $canSeeBillingAddress = i('can view billing address', static::$model);
+        $canSeeCreditCardInfo = i('can view credit card info', UserInformation::class);
+        $canSeeShippingAddress = i('can view shipping address', UserInformation::class);
+        $canSeeBillingAddress = i('can view billing address', UserInformation::class);
 
         return [
             $this->displayStoresTextField(),
