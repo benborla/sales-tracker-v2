@@ -93,7 +93,7 @@ class GroupTeam extends Resource
 
             BelongsTo::make('Store')->display('name'),
             Text::make('Name', 'name')->sortable(),
-            Textarea::make('Notes', 'notes')->sortable()->alwaysShow(),
+            Textarea::make('Notes', 'notes')->required()->sortable()->alwaysShow()->default('Team'),
             HasMany::make('Members', 'members', \App\Nova\GroupTeamMember::class)->sortable(),
             DateTime::make('Created At')->sortable()->onlyOnIndex(),
             DateTime::make('Updated At')->sortable()->onlyOnIndex(),
