@@ -97,7 +97,9 @@ class UserObserver
         Nova::whenServing(function (NovaRequest $request) use ($user) {
             $userInformation = $request->only((new UserInformation)->getFillable());
 
-            $user->information->update($userInformation);
+            if ($user->information instanceof UserInformation) {
+                $user->information->update($userInformation);
+            }
         });
     }
 
