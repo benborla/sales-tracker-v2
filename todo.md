@@ -27,7 +27,7 @@
 [x] - UPC, ASIN, and size fields not showing up
 
 ## Customers
-[ ] - Create Customer (TextArea error)
+[x] - Create Customer (TextArea error)
         - Server Error
 
 ## Staff

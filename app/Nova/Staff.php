@@ -93,11 +93,7 @@ class Staff extends AbstractUserBase
                 ->rules('required', 'email', 'min:8')
                 ->onlyOnForms()->hideWhenCreating(),
 
-            Text::make('Email', function () {
-                $url = "/resources/{$this->uriKey()}/{$this->id}";
-                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$this->email}</a>";
-            })
-                ->asHtml()
+            Text::make('Email', 'email')
                 ->exceptOnForms(),
 
             Boolean::make('Is Active', 'is_active', function () {
@@ -121,8 +117,10 @@ class Staff extends AbstractUserBase
             })->required()->hideFromIndex(),
 
             Text::make('Name', 'full_name', function () {
-                return $this->information->full_name ?? '';
-            })->onlyOnIndex(),
+                $name = $this->information->full_name ?? '';
+                $url = "/resources/{$this->uriKey()}/{$this->id}";
+                return "<a class='no-underline dim text-primary font-bold' href='{$url}'>{$name}</a>";
+            })->asHtml()->onlyOnIndex(),
 
             Text::make('Created At', 'created_at', function () {
                 return $this->created_at->format('M. d Y');
