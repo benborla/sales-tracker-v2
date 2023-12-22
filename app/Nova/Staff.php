@@ -90,7 +90,7 @@ class Staff extends AbstractUserBase
                 ->onlyOnForms(),
 
             Password::make('Password')
-                ->rules('required', 'email', 'min:8')
+                ->rules('required', 'string', 'min:8')
                 ->onlyOnForms()->hideWhenCreating(),
 
             Text::make('Email', 'email')
