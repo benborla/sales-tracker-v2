@@ -112,8 +112,7 @@ class Order extends Resource
                 return "<a class='no-underline dim text-primary font-bold text-xs' href='{$url}'>{$this->invoice_id}</a>";
             })->asHtml()->exceptOnForms(),
 
-            Boolean::make('Approve Order?', 'is_approved')
-                ->trueValue(true)
+            Boolean::make('Approve Order?', 'is_approved') ->trueValue(true)
                 ->falseValue(false)
                 ->default(i('can approve', static::$model))
                 ->canSee(function () {
@@ -138,6 +137,8 @@ class Order extends Resource
                 ])->default(OrderModel::ORDER_SALES_CHANNEL_OFFICE)
                 ->onlyOnForms()
                 ->required(true),
+
+            Text::make('Sales Channel')->exceptOnForms(),
 
             Badge::make('Price Based On')->map([
                 OrderModel::PRICE_BASED_ON_RETAIL => 'success',
