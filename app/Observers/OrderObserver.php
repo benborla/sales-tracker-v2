@@ -46,4 +46,12 @@ class OrderObserver
     {
         return in_array($request->method(), ['PUT', 'POST']);
     }
+
+    public function deleting(Order $order)
+    {
+        // INFO: iterate through all order items and put back the product inventory
+        foreach ($order->orderItems as $orderItem) {
+            add_to_product_inventory($orderItem);
+        }
+    }
 }

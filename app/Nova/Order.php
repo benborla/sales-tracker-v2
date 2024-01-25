@@ -273,7 +273,7 @@ class Order extends Resource
                     'box' => 'Box',
                 ])->required()->hideFromIndex(),
 
-                Text::make('Tracking Reference'),
+                Text::make('Tracking Reference')->required(),
 
             ]),
 
