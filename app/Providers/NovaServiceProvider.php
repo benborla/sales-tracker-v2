@@ -9,12 +9,17 @@ use App\Observers\OrderItemObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ProductObserver;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use Laravel\Nova\Observable;
 use App\Models\User;
 use App\Observers\UserObserver;
+use App\Permissions\Dashboard;
+use App\Nova\Metrics\TotalSales;
+use App\Nova\Metrics\SalesTrend;
+use App\Nova\Metrics\NewOrders;
+use App\Nova\Metrics\OrdersByStatus;
+use App\Nova\Metrics\OrdersByChannel;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -69,8 +74,20 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function cards()
     {
         return [
-            new \App\Nova\Dashboards\OrderStatus,
+            (new TotalSales)->canSee($this->canViewCard(Dashboard::DASHBOARD_CAN_VIEW_TOTAL_SALES)),
+            (new NewOrders)->canSee($this->canViewCard(Dashboard::DASHBOARD_CAN_VIEW_NEW_ORDERS)),
+            (new SalesTrend)->canSee($this->canViewCard(Dashboard::DASHBOARD_CAN_VIEW_SALES_TREND)),
+            (new OrdersByStatus)->canSee($this->canViewCard(Dashboard::DASHBOARD_CAN_VIEW_ORDERS_BY_STATUS)),
+            (new OrdersByChannel)->canSee($this->canViewCard(Dashboard::DASHBOARD_CAN_VIEW_ORDERS_BY_CHANNEL)),
         ];
+    }
+
+    /**
+     * Build a canSee callback that checks a single dashboard permission.
+     */
+    protected function canViewCard(Dashboard $permission): callable
+    {
+        return fn ($request) => $request->user()?->hasRoleWithPermission($permission->value) ?? false;
     }
 
     /**
