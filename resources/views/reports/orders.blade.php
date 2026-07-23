@@ -9,10 +9,11 @@
     </ul>
 </div>
 @endif
+<details class="mb-2">
+    <summary class="text-90 font-normal text-2xl mb-3 cursor-pointer">Export as Spreadsheet</summary>
 <form method="POST" action="{{ route('export.orders') }}" name="orders-to-spreadsheet" id="orders-to-spreadsheet">
     @csrf
     <div class="mb-2">
-        <h2 class="text-90 font-normal text-2xl mb-3">Export as Spreadsheet</h2>
         <div class="card">
             <div class="flex border-b border-40">
                <div class="w-1/3 flex justify-center items-center">
@@ -115,5 +116,6 @@
         </button>
     </div>
 </form>
+</details>
 
 @endif
