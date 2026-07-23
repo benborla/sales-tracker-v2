@@ -28,6 +28,16 @@ use App\Nova\Actions\ApproveOrder;
 use Laravel\Nova\Fields\Boolean;
 use InteractionDesignFoundation\HtmlCard\HtmlCard;
 use App\Models\UserInformation;
+use App\Permissions\Order as OrderPermission;
+use App\Nova\Metrics\TotalSales;
+use App\Nova\Metrics\NewOrders;
+use App\Nova\Metrics\AverageOrderValue;
+use App\Nova\Metrics\AwaitingPayment;
+use App\Nova\Metrics\OrdersToShip;
+use App\Nova\Metrics\SalesTrend;
+use App\Nova\Metrics\OrdersByStatus;
+use App\Nova\Metrics\OrdersByChannel;
+use App\Nova\Metrics\OrdersByPaymentStatus;
 
 class Order extends Resource
 {
@@ -335,8 +345,25 @@ class Order extends Resource
     public function cards(Request $request)
     {
         return [
+            (new TotalSales)->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_TOTAL_SALES)),
+            (new NewOrders)->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_NEW_ORDERS)),
+            (new AverageOrderValue)->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_AVG_ORDER_VALUE)),
+            (new AwaitingPayment)->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_AWAITING_PAYMENT)),
+            (new OrdersToShip)->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_ORDERS_TO_SHIP)),
+            (new SalesTrend)->width('2/3')->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_SALES_TREND)),
+            (new OrdersByStatus)->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_ORDERS_BY_STATUS)),
+            (new OrdersByChannel)->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_ORDERS_BY_CHANNEL)),
+            (new OrdersByPaymentStatus)->canSee($this->canViewCard(OrderPermission::ORDER_METRIC_VIEW_ORDERS_BY_PAYMENT_STATUS)),
             (new HtmlCard())->width('full')->view('reports.orders', [])->withoutCardStyles(true),
         ];
+    }
+
+    /**
+     * Build a canSee callback that checks a single Orders-page card permission.
+     */
+    protected function canViewCard(OrderPermission $permission): callable
+    {
+        return fn ($request) => $request->user()?->hasRoleWithPermission($permission->value) ?? false;
     }
 
     /**
